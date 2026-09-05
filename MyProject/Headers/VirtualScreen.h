@@ -15,9 +15,6 @@ public:
     int SetTiles(uint8_t *tiles, int tileSize) {
         TileSize = tileSize;
 
-        if (sizeof(tiles) / sizeof(uint8_t) > tileSize * tileSize * 256)
-            return -1;
-
         Tiles = tiles;
 
         return 0;

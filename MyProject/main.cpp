@@ -20,7 +20,7 @@ int main() {
         {0,0,0,0},
         {1,1,1,1},
         {0,0,0,0},
-        (0,1,0,1)
+        {0,1,0,1}
     };
 
     vs.SetTiles(&tiles[0][0][0], 4);
@@ -39,6 +39,7 @@ int main() {
             }
         }
 
+        wiz.OverwriteBuffer(vs.GetScreen());
         SDL_Delay(16);
     }
     return 0;
