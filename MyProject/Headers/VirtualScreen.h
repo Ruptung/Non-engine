@@ -2,14 +2,23 @@
 #include <cstdint>
 #include <vector>
 
+#define TILE_ID(id)         ((id) << 8)
+#define TILE_PALETTE(num)   ((num) << 4)
+#define TILE_LAYER(layer)   ((layer) << 2)
+#define TILE_X_IVRT         (1 << 1)
+#define TILE_Y_IVRT         (1)
+
+#define PIXEL_NUMBER(num)   ((num) << 5)
+#define PIXEL_PALETTE(num)  ((num) << 2)
+#define PIXEL_LAYER(layer)  (layer)
 
 class VirtualScreen {
 public:
     VirtualScreen(int vHeight, int vWidth)
     : VirtualHeight(vHeight), VirtualWidth(vWidth), ScreenBuffer(vHeight * vWidth, 0){}
 
-    std::vector<uint8_t>* GetScreen() {
-        return &ScreenBuffer;
+    const std::vector<uint8_t> GetScreen() {
+        return ScreenBuffer;
     }
 
     int SetTiles(uint8_t *tiles, int tileSize) {
@@ -23,9 +32,13 @@ public:
     void DrawTileOnWorld(int wy, int wx, uint16_t tileData) {
         int pos = (tileData >> 8) *TileSize*TileSize;
 
+
         for (int y = 0; y < TileSize; ++y) {
             for (int x = 0; x < TileSize; ++x) {
-                DrawPixel(wy+y, wx+x, Tiles[pos + y * TileSize + x]);
+                int tileNumber = Tiles[pos + y * TileSize + x];
+                int tilePalette =   (tileData >> 4) & 0x03;
+                int tileLayer =     (tileData >> 2) & 0x02;
+                DrawPixel(wy+y, wx+x, PIXEL_NUMBER(tileNumber) | PIXEL_PALETTE(tilePalette) | PIXEL_LAYER(tileLayer));
             }
         }
     }

@@ -3,9 +3,12 @@
 
 #include "Headers/SDL_Wizard.h"
 #include "Headers/VirtualScreen.h"
+#include "Headers/Painter.h"
 
 #define SCREEN_WIDTH 1024
 #define SCREEN_HEIGHT 1024
+#define VIRTUAL_WIDTH 32
+#define VIRTUAL_HEIGHT 32
 
 int main() {
     SDL_Wizard wiz = SDL_Wizard(SCREEN_HEIGHT, SCREEN_WIDTH);
@@ -14,13 +17,19 @@ int main() {
 
     SDL_Event event;
 
-    VirtualScreen vs = VirtualScreen(32, 32);
+    VirtualScreen vs = VirtualScreen(VIRTUAL_HEIGHT, VIRTUAL_WIDTH);
+    Painter painter = Painter(SCREEN_HEIGHT, SCREEN_WIDTH, VIRTUAL_HEIGHT, VIRTUAL_WIDTH);
+
+    uint32_t colors[] = { 0xFF000000, 0xFFFFFFFF, 0xFF00FF00, 0xFF0000FF};
+    painter.SetPalette(colors);
 
     uint8_t tiles[][4][4] = {
-        {0,0,0,0},
-        {1,1,1,1},
-        {0,0,0,0},
-        {0,1,0,1}
+        {
+            {1,0,0,0},
+            {1,1,1,1},
+            {0,0,0,0},
+            {0,1,0,1}
+        }
     };
 
     vs.SetTiles(&tiles[0][0][0], 4);
@@ -33,13 +42,15 @@ int main() {
             if (event.type == SDL_EVENT_KEY_DOWN) {
                 switch (event.key.key) {
                     case SDLK_Q:
-                        vs.DrawTileOnGrid(1, 1, 0);
+
                         break;
                 }
             }
         }
 
-        wiz.OverwriteBuffer(vs.GetScreen());
+        vs.DrawTileOnGrid(0, 0, TILE_ID(0) | TILE_LAYER(1) | TILE_PALETTE(0));
+
+        wiz.OverwriteBuffer(painter.GetScreen(vs.GetScreen()));
         SDL_Delay(16);
     }
     return 0;
