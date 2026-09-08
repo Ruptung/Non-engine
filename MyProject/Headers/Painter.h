@@ -14,7 +14,7 @@ public:
                 uint8_t data = virtualScreen[vy * VirtualWidth + vx];
 
                 //get palette and color
-                uint32_t rgbColor = palette[((data & 0b00011100) >> 2 * 8) + ((data & 0b11100000) >> 5)];
+                uint32_t rgbColor = palette[(((data & 0b00011100) >> 2) * 8) + ((data & 0b11100000) >> 5)];
 
                 for (int ry = 0; ry < Ratio; ry++) {
                     for (int rx = 0; rx < Ratio; rx++) {

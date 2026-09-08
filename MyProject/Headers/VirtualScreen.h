@@ -17,7 +17,7 @@ public:
     VirtualScreen(int vHeight, int vWidth)
     : VirtualHeight(vHeight), VirtualWidth(vWidth), ScreenBuffer(vHeight * vWidth, 0){}
 
-    const std::vector<uint8_t> GetScreen() {
+    const std::vector<uint8_t> GetScreen() const {
         return ScreenBuffer;
     }
 
@@ -36,8 +36,8 @@ public:
         for (int y = 0; y < TileSize; ++y) {
             for (int x = 0; x < TileSize; ++x) {
                 int tileNumber = Tiles[pos + y * TileSize + x];
-                int tilePalette =   (tileData >> 4) & 0x03;
-                int tileLayer =     (tileData >> 2) & 0x02;
+                int tilePalette =   (tileData >> 4) & 0x0B;
+                int tileLayer =     (tileData >> 2) & 0x03;
                 DrawPixel(wy+y, wx+x, PIXEL_NUMBER(tileNumber) | PIXEL_PALETTE(tilePalette) | PIXEL_LAYER(tileLayer));
             }
         }
