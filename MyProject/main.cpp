@@ -5,8 +5,8 @@
 #include "Headers/VirtualScreen.h"
 #include "Headers/Painter.h"
 
-#define SCREEN_WIDTH 1024
-#define SCREEN_HEIGHT 1024
+#define SCREEN_WIDTH 32
+#define SCREEN_HEIGHT 32
 #define VIRTUAL_WIDTH 32
 #define VIRTUAL_HEIGHT 32
 
@@ -47,6 +47,7 @@ int main() {
                 }
             }
         }
+
 
         vs.DrawTileOnGrid(0, 0, TILE_ID(0) | TILE_LAYER(1) | TILE_PALETTE(0));
 
