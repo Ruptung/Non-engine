@@ -7,5 +7,8 @@ list(APPEND CMAKE_PREFIX_PATH "C:/myLibs")
 find_package(SDL3 REQUIRED CONFIG)
 
 add_executable(MyProject main.cpp
-        Headers/Painter.h)
+        Headers/Painter.h
+        Headers/IOperator.h
+        Headers/OperateControl.h
+        Headers/OperateRender.h)
 target_link_libraries(MyProject PRIVATE SDL3::SDL3)

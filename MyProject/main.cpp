@@ -1,28 +1,23 @@
-#include <cstdio>
 #include <SDL3/SDL.h>
 
-#include "Headers/SDL_Wizard.h"
-#include "Headers/VirtualScreen.h"
-#include "Headers/Painter.h"
+#include "Headers/IOperator.h"
+#include "Headers/OperateControl.h"
+#include "Headers/OperateRender.h"
 
-#define SCREEN_WIDTH 32
-#define SCREEN_HEIGHT 32
+#define SCREEN_WIDTH 1024
+#define SCREEN_HEIGHT 1024
 #define VIRTUAL_WIDTH 32
 #define VIRTUAL_HEIGHT 32
 
-int main() {
-    SDL_Wizard wiz = SDL_Wizard(SCREEN_HEIGHT, SCREEN_WIDTH);
 
+int main() {
     bool running = true;
 
     SDL_Event event;
 
-    VirtualScreen vs = VirtualScreen(VIRTUAL_HEIGHT, VIRTUAL_WIDTH);
-    Painter painter = Painter(SCREEN_HEIGHT, SCREEN_WIDTH, VIRTUAL_HEIGHT, VIRTUAL_WIDTH);
-
-    uint32_t colors[] = { 0xFF000000, 0xFFFFFFFF, 0xFF00FF00, 0xFF0000FF};
-    painter.SetPalette(colors);
-
+    uint32_t colors[][8] = {
+        0xFF000000, 0xFFFFFFFF, 0xFF00FF00, 0xFF0000FF
+    };
     uint8_t tiles[][4][4] = {
         {
             {1,0,0,0},
@@ -32,26 +27,26 @@ int main() {
         }
     };
 
-    vs.SetTiles(&tiles[0][0][0], 4);
+    IOperator *currentPointer = nullptr;
+    OperateControl operate_control = OperateControl(event);
+    OperateRender operate_render = OperateRender(
+        VIRTUAL_HEIGHT, VIRTUAL_WIDTH,
+        SCREEN_HEIGHT, SCREEN_WIDTH,
+        &colors[0][0], &tiles[0][0][0]
+        );
 
     while (running) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_EVENT_QUIT)
                 running = false;
 
-            if (event.type == SDL_EVENT_KEY_DOWN) {
-                switch (event.key.key) {
-                    case SDLK_Q:
-
-                        break;
-                }
-            }
+            currentPointer = &operate_control;
+            currentPointer->Update();
         }
 
+        currentPointer = &operate_render;
+        currentPointer->Update();
 
-        vs.DrawTileOnGrid(0, 0, TILE_ID(0) | TILE_LAYER(1) | TILE_PALETTE(0));
-
-        wiz.OverwriteBuffer(painter.GetScreen(vs.GetScreen()));
         SDL_Delay(16);
     }
     return 0;

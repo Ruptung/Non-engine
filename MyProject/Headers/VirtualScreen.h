@@ -14,19 +14,11 @@
 
 class VirtualScreen {
 public:
-    VirtualScreen(int vHeight, int vWidth)
-    : VirtualHeight(vHeight), VirtualWidth(vWidth), ScreenBuffer(vHeight * vWidth, 0){}
+    VirtualScreen(int vHeight, int vWidth, int TileSize, uint8_t *Tiles)
+    : VirtualHeight(vHeight), VirtualWidth(vWidth), ScreenBuffer(vHeight * vWidth, 0), TileSize(TileSize), Tiles(Tiles){}
 
     const std::vector<uint8_t> GetScreen() const {
         return ScreenBuffer;
-    }
-
-    int SetTiles(uint8_t *tiles, int tileSize) {
-        TileSize = tileSize;
-
-        Tiles = tiles;
-
-        return 0;
     }
 
     void DrawTileOnWorld(int wy, int wx, uint16_t tileData) {
@@ -36,8 +28,9 @@ public:
         for (int y = 0; y < TileSize; ++y) {
             for (int x = 0; x < TileSize; ++x) {
                 int tileNumber = Tiles[pos + y * TileSize + x];
-                int tilePalette =   (tileData >> 4) & 0x0B;
+                int tilePalette =   (tileData >> 4) & 0x07;
                 int tileLayer =     (tileData >> 2) & 0x03;
+
                 DrawPixel(wy+y, wx+x, PIXEL_NUMBER(tileNumber) | PIXEL_PALETTE(tilePalette) | PIXEL_LAYER(tileLayer));
             }
         }

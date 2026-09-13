@@ -15,17 +15,20 @@
 class SDL_Wizard
 {
 public:
-	SDL_Wizard(int y, int x) : height(y), width(x) {
+	SDL_Wizard(int VirtualHeight, int VirtualWidth, int ScreenHeight, int ScreenWidth)
+	: VirtualHeight(VirtualHeight), VirtualWidth(VirtualWidth), ScreenHeight(ScreenHeight), ScreenWidth(ScreenWidth),
+
+	window(SDL_CreateWindow("Pixel Buffer", ScreenWidth, ScreenHeight, 0)),
+	renderer(SDL_CreateRenderer(window, nullptr)){
+
         SDL_Init(SDL_INIT_VIDEO);
-        window = SDL_CreateWindow("Pixel Buffer", 512, 512, 0);
-        renderer = SDL_CreateRenderer(window, NULL);
 
 	    // 텍스처는 가상 해상도(32x32) 크기로 생성
 	    texture = SDL_CreateTexture(
             renderer,
             SDL_PIXELFORMAT_ARGB8888,
             SDL_TEXTUREACCESS_STREAMING,
-            x, y
+            VirtualWidth, VirtualHeight
         );
 
 	    // 픽셀이 뭉개지지 않도록 최근접 점(Nearest-neighbor) 필터링 설정
@@ -40,14 +43,14 @@ public:
 	}
 
     void OverwriteBuffer(const std::vector<uint32_t>* buffer) {
-        SDL_UpdateTexture(texture, NULL, buffer->data(), width * sizeof(uint32_t));
+        SDL_UpdateTexture(texture, NULL, buffer->data(), VirtualWidth * sizeof(uint32_t));
         SDL_RenderClear(renderer);
         SDL_RenderTexture(renderer, texture, NULL, NULL);
         SDL_RenderPresent(renderer);
     }
 
 private:
-    int width, height;
+    int VirtualWidth, VirtualHeight, ScreenWidth, ScreenHeight;
     SDL_Window* window;
     SDL_Renderer* renderer;
     SDL_Texture* texture;
