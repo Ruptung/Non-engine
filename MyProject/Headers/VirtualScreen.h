@@ -1,5 +1,5 @@
 #pragma once
-#include <cstdint>
+#include "BasicStructures.h"
 #include <vector>
 
 #define TILE_ID(id)         ((id) << 8)
@@ -14,10 +14,10 @@
 
 class VirtualScreen {
 public:
-    VirtualScreen(int vHeight, int vWidth, int TileSize, uint8_t *Tiles)
-    : VirtualHeight(vHeight), VirtualWidth(vWidth), ScreenBuffer(vHeight * vWidth, 0), TileSize(TileSize), Tiles(Tiles){}
+    VirtualScreen(Vector2 VirtualVector, int TileSize, uint8_t *Tiles)
+    : VirtualHeight(VirtualVector.y), VirtualWidth(VirtualVector.x), ScreenBuffer(VirtualVector.y * VirtualVector.x, 0), TileSize(TileSize), Tiles(Tiles){}
 
-    const std::vector<uint8_t> GetScreen() const {
+    const std::vector<uint8_t> &GetScreen() {
         return ScreenBuffer;
     }
 
