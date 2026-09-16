@@ -2,8 +2,16 @@
 
 struct Vector2 {
 public:
-    Vector2(const int x, const int y) : x(x), y(y) {}
+    Vector2(int x, int y) : x(x), y(y) {}
 
-    const int x;
-    const int y;
+    int x;
+    int y;
+
+    Vector2 operator+(const Vector2 other) {
+        return Vector2(x + other.x, y + other.y);
+    }
+
+    Vector2 operator*(const int scalar) {
+        return Vector2(x * scalar, y * scalar);
+    }
 };

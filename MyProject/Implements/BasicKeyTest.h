@@ -1,7 +1,5 @@
 #pragma once
 
-#include <cstdio>
-
 #include "../Headers/IEventListener.h"
 
 enum class keyInstruction : SDL_Keycode {

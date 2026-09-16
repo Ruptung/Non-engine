@@ -15,35 +15,41 @@
 class VirtualScreen {
 public:
     VirtualScreen(Vector2 VirtualVector, int TileSize, uint8_t *Tiles)
-    : VirtualHeight(VirtualVector.y), VirtualWidth(VirtualVector.x), ScreenBuffer(VirtualVector.y * VirtualVector.x, 0), TileSize(TileSize), Tiles(Tiles){}
+    : VirtualVector(VirtualVector), ScreenBuffer(VirtualVector.y * VirtualVector.x, 0), TileSize(TileSize), Tiles(Tiles){}
 
     const std::vector<uint8_t> &GetScreen() {
         return ScreenBuffer;
     }
 
-    void DrawTileOnWorld(int wy, int wx, uint16_t tileData) {
+    void Clear() {
+        for (int i = 0; i < ScreenBuffer.size(); i++) {
+            ScreenBuffer[i] = 0x00;
+        }
+    }
+
+    void DrawTileOnWorld(Vector2 wv, uint16_t tileData) {
         int pos = (tileData >> 8) *TileSize*TileSize;
 
 
         for (int y = 0; y < TileSize; ++y) {
             for (int x = 0; x < TileSize; ++x) {
-                int tileNumber = Tiles[pos + y * TileSize + x];
+                int tileNumber =    Tiles[pos + y * TileSize + x];
                 int tilePalette =   (tileData >> 4) & 0x07;
                 int tileLayer =     (tileData >> 2) & 0x03;
 
-                DrawPixel(wy+y, wx+x, PIXEL_NUMBER(tileNumber) | PIXEL_PALETTE(tilePalette) | PIXEL_LAYER(tileLayer));
+                DrawPixel(wv + Vector2(x, y), PIXEL_NUMBER(tileNumber) | PIXEL_PALETTE(tilePalette) | PIXEL_LAYER(tileLayer));
             }
         }
     }
 
-    void DrawTileOnGrid(int gy, int gx, uint16_t tileData) {
-        DrawTileOnWorld(gy * TileSize, gx * TileSize, tileData);
+    void DrawTileOnGrid(Vector2 gv, uint16_t tileData) {
+        DrawTileOnWorld(gv * TileSize, tileData);
     }
 
 private:
-    void DrawPixel(int wy, int wx, uint8_t pixelData) {
+    void DrawPixel(Vector2 wv, uint8_t pixelData) {
         uint8_t typeMask = 0b00000011;
-        int pos = wy * VirtualWidth + wx;
+        int pos = wv.y * VirtualVector.x + wv.x;
 
         if ((ScreenBuffer[pos] & typeMask) > (pixelData & typeMask)) // isLayer Low?
             return;
@@ -55,7 +61,7 @@ private:
 
 
     int TileSize;
-    int VirtualHeight, VirtualWidth;
+    Vector2 VirtualVector;
     //color 3, palette 3, layer 2
     std::vector<uint8_t> ScreenBuffer;
 
