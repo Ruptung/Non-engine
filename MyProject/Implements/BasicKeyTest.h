@@ -2,23 +2,54 @@
 
 #include "../Headers/IEventListener.h"
 
-enum class keyInstruction : SDL_Keycode {
-    Quit = SDLK_Q,
-    Pressed_A = SDLK_A
+struct KeyFlags {
+public:
+    KeyFlags() : axis(Vector2::zero()) {}
+
+    Vector2 axis;
 };
 
 
 class BasicKeyTest : public IEventListener {
 public:
-    void OnEvent(const SDL_Event& event) override {
+    BasicKeyTest(KeyFlags &keys) : keys(keys) {
+    }
+
+    void OnEvent(const SDL_Event &event) override {
         if (event.type == SDL_EVENT_KEY_DOWN) {
-            switch ((keyInstruction)event.key.key) {
-                case keyInstruction::Pressed_A:
-                    printf("A!");
+            switch (event.key.key) {
+                case SDLK_UP:
+                    keys.axis.y = 1;
                     break;
-                case keyInstruction::Quit:
+                case SDLK_DOWN:
+                    keys.axis.y = -1;
+                    break;
+                case SDLK_LEFT:
+                    keys.axis.x = -1;
+                    break;
+                case SDLK_RIGHT:
+                    keys.axis.x = 1;
+                    break;
+            }
+        }
+        if (event.type == SDL_EVENT_KEY_UP) {
+            switch (event.key.key) {
+                case SDLK_UP:
+                    keys.axis.y = 0;
+                    break;
+                case SDLK_DOWN:
+                    keys.axis.y = 0;
+                    break;
+                case SDLK_LEFT:
+                    keys.axis.x = 0;
+                    break;
+                case SDLK_RIGHT:
+                    keys.axis.x = 0;
                     break;
             }
         }
     }
+
+private:
+    KeyFlags &keys;
 };

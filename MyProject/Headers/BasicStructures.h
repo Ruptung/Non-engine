@@ -14,4 +14,8 @@ public:
     Vector2 operator*(const int scalar) {
         return Vector2(x * scalar, y * scalar);
     }
+
+    static Vector2 zero() {
+        return  Vector2(0, 0);
+    }
 };

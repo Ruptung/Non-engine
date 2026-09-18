@@ -9,6 +9,7 @@
 #include "Headers/SDL_Wizard.h"
 
 #include "Implements/BasicKeyTest.h"
+#include "Implements/MyRule.h"
 #include "Implements/TileRender.h"
 
 #define SCREEN_WIDTH 1024
@@ -23,8 +24,6 @@ int main() {
 
     bool running = true;
 
-
-
     uint32_t colors[][8] = {
         0xFF000000, 0xFFFFFFFF, 0xFF00FF00, 0xFF0000FF
     };
@@ -37,27 +36,40 @@ int main() {
         }
     };
 
+    //init
     SDL_Wizard wiz(VirtualVector, ScreenVector);
     VirtualScreen vs(VirtualVector, 4, &tiles[0][0][0]);
     Painter painter(VirtualVector, &colors[0][0]);
     SDL_Event event;
+    KeyFlags keys;
 
+    //systems
     std::vector<IEventListener*> listeners;
     std::vector<IRender*> renders;
     std::vector<IRule*> rules;
 
+    //properties
+    std::vector<Transform*> transforms;
     std::vector<Renderable*> Renderables;
+    std::vector<Physic*> physics;
 
-    Renderable renderable = Renderable(Vector2(1,1), TILE_ID(0) | TILE_LAYER(1) | TILE_PALETTE(0));
-    Renderables.push_back(&renderable);
-
-    BasicKeyTest basic_key_test = BasicKeyTest();
+    //rules
+    BasicKeyTest basic_key_test = BasicKeyTest(keys);
     listeners.push_back(&basic_key_test);
+
+    MyRule my_rule = MyRule(keys, transforms);
+    rules.push_back(&my_rule);
 
     TileRender tile_render = TileRender(Renderables);
     renders.push_back(&tile_render);
 
+    //entities
+    Transform transform = Transform(Vector2(1, 1));
+    transforms.push_back(&transform);
+    Renderable renderable = Renderable(&transform, TILE_ID(0) | TILE_LAYER(1) | TILE_PALETTE(0));
+    Renderables.push_back(&renderable);
 
+    //loop
     while (running) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_EVENT_QUIT)

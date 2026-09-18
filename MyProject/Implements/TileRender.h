@@ -10,8 +10,8 @@ public:
 
     void Render(VirtualScreen &vs) override{
         for (Renderable *r : renderables)
-            vs.DrawTileOnGrid(r->pivot, r->tileData);
+            vs.DrawTileOnGrid(r->transform->position, r->tileData);
     }
 private:
-    std::vector<Renderable*> renderables;
+    std::vector<Renderable*>& renderables;
 };
