@@ -38,7 +38,6 @@ int main() {
 
     //init
     SDL_Wizard wiz(VirtualVector, ScreenVector);
-    VirtualScreen vs(VirtualVector, 4, &tiles[0][0][0]);
     Painter painter(VirtualVector, &colors[0][0]);
     SDL_Event event;
     KeyFlags keys;
@@ -64,10 +63,16 @@ int main() {
     renders.push_back(&tile_render);
 
     //entities
-    Transform transform = Transform(Vector2(1, 1));
-    transforms.push_back(&transform);
-    Renderable renderable = Renderable(&transform, TILE_ID(0) | TILE_LAYER(1) | TILE_PALETTE(0));
+    Transform camera = Transform(Vector2(3, 3));
+    transforms.push_back(&camera);
+    Renderables.push_back(nullptr);
+
+    Transform player = Transform(Vector2(0, 0));
+    transforms.push_back(&player);
+    Renderable renderable = Renderable(&player, TILE_ID(0) | TILE_LAYER(1) | TILE_PALETTE(0));
     Renderables.push_back(&renderable);
+
+    VirtualScreen vs(VirtualVector, camera, 4, &tiles[0][0][0]);
 
     //loop
     while (running) {

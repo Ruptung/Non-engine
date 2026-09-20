@@ -9,8 +9,11 @@ public:
     }
 
     void Render(VirtualScreen &vs) override{
-        for (Renderable *r : renderables)
+        for (Renderable *r : renderables) {
+            if (r == nullptr) continue;
+
             vs.DrawTileOnGrid(r->transform->position, r->tileData);
+        }
     }
 private:
     std::vector<Renderable*>& renderables;

@@ -11,8 +11,16 @@ public:
         return Vector2(x + other.x, y + other.y);
     }
 
+    Vector2 operator-(const Vector2 other) {
+        return Vector2(x - other.x, y - other.y);
+    }
+
     Vector2 operator*(const int scalar) {
         return Vector2(x * scalar, y * scalar);
+    }
+
+    Vector2 operator/(const int scalar) {
+        return Vector2(x / scalar, y / scalar);
     }
 
     static Vector2 zero() {

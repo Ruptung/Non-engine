@@ -19,10 +19,10 @@ public:
         if (event.type == SDL_EVENT_KEY_DOWN) {
             switch (event.key.key) {
                 case SDLK_UP:
-                    keys.axis.y = 1;
+                    keys.axis.y = -1;
                     break;
                 case SDLK_DOWN:
-                    keys.axis.y = -1;
+                    keys.axis.y = 1;
                     break;
                 case SDLK_LEFT:
                     keys.axis.x = -1;

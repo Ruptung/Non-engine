@@ -14,8 +14,8 @@
 
 class VirtualScreen {
 public:
-    VirtualScreen(Vector2 VirtualVector, int TileSize, uint8_t *Tiles)
-    : VirtualVector(VirtualVector), ScreenBuffer(VirtualVector.y * VirtualVector.x, 0), TileSize(TileSize), Tiles(Tiles){}
+    VirtualScreen(Vector2 VirtualVector,Transform &cam, int TileSize, uint8_t *Tiles)
+    : VirtualVector(VirtualVector), HalfVirtualVector(VirtualVector / 2), ScreenBuffer(VirtualVector.y * VirtualVector.x, 0), cam(cam), TileSize(TileSize), Tiles(Tiles){}
 
     const std::vector<uint8_t> &GetScreen() {
         return ScreenBuffer;
@@ -28,22 +28,52 @@ public:
     }
 
     void DrawTileOnWorld(Vector2 wv, uint16_t tileData) {
+        Vector2 lookVector = wv - cam.position * TileSize;
+
+        if (!CheckCamBoundery(lookVector)) return;
+
         int pos = (tileData >> 8) *TileSize*TileSize;
-
-
         for (int y = 0; y < TileSize; ++y) {
             for (int x = 0; x < TileSize; ++x) {
                 int tileNumber =    Tiles[pos + y * TileSize + x];
                 int tilePalette =   (tileData >> 4) & 0x07;
                 int tileLayer =     (tileData >> 2) & 0x03;
 
-                DrawPixel(wv + Vector2(x, y), PIXEL_NUMBER(tileNumber) | PIXEL_PALETTE(tilePalette) | PIXEL_LAYER(tileLayer));
+                DrawPixel(
+                    lookVector + HalfVirtualVector + Vector2(x, y),
+                    PIXEL_NUMBER(tileNumber) | PIXEL_PALETTE(tilePalette) | PIXEL_LAYER(tileLayer)
+                    );
             }
         }
     }
 
     void DrawTileOnGrid(Vector2 gv, uint16_t tileData) {
-        DrawTileOnWorld(gv * TileSize, tileData);
+        Vector2 lookVector = (gv - cam.position) * TileSize;
+
+        if (!CheckCamBoundery(lookVector)) return;
+
+        int pos = (tileData >> 8) *TileSize*TileSize;
+        for (int y = 0; y < TileSize; ++y) {
+            for (int x = 0; x < TileSize; ++x) {
+                int tileNumber =    Tiles[pos + y * TileSize + x];
+                int tilePalette =   (tileData >> 4) & 0x07;
+                int tileLayer =     (tileData >> 2) & 0x03;
+
+                DrawPixel(
+                    lookVector + HalfVirtualVector + Vector2(x, y),
+                    PIXEL_NUMBER(tileNumber) | PIXEL_PALETTE(tilePalette) | PIXEL_LAYER(tileLayer)
+                    );
+            }
+        }
+    }
+
+
+    bool CheckCamBoundery(Vector2 wLookVector) {
+
+        if (wLookVector.x >= HalfVirtualVector.x || wLookVector.x <  - HalfVirtualVector.x) return false;
+        if (wLookVector.y >= HalfVirtualVector.y || wLookVector.y <  - HalfVirtualVector.y) return false;
+
+        return true;
     }
 
 private:
@@ -62,6 +92,10 @@ private:
 
     int TileSize;
     Vector2 VirtualVector;
+
+    Vector2 HalfVirtualVector;
+
+    Transform &cam;
     //color 3, palette 3, layer 2
     std::vector<uint8_t> ScreenBuffer;
 
