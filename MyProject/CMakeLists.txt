@@ -14,5 +14,7 @@ add_executable(MyProject main.cpp
         Headers/IRender.h
         Implements/TileRender.h
         Headers/IRule.h
-        Implements/MyRule.h)
+        Implements/MyRule.h
+        Implements/MapRenderer.h
+        Headers/Object.h)
 target_link_libraries(MyProject PRIVATE SDL3::SDL3)

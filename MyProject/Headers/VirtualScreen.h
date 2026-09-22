@@ -27,6 +27,10 @@ public:
         }
     }
 
+    void Alpha() {
+        enableAlpha = true;
+    }
+
     void DrawTileOnWorld(Vector2 wv, uint16_t tileData) {
         Vector2 lookVector = wv - cam.position * TileSize;
 
@@ -39,8 +43,15 @@ public:
                 int tilePalette =   (tileData >> 4) & 0x07;
                 int tileLayer =     (tileData >> 2) & 0x03;
 
+                Vector2 pxVector = Vector2(x, y);
+
+                if (tileData & 0x02)
+                    pxVector.x = (TileSize-1) - pxVector.x;
+                if (tileData & 0x01)
+                    pxVector.y = (TileSize-1) - pxVector.y;
+
                 DrawPixel(
-                    lookVector + HalfVirtualVector + Vector2(x, y),
+                    lookVector + HalfVirtualVector + pxVector,
                     PIXEL_NUMBER(tileNumber) | PIXEL_PALETTE(tilePalette) | PIXEL_LAYER(tileLayer)
                     );
             }
@@ -59,8 +70,16 @@ public:
                 int tilePalette =   (tileData >> 4) & 0x07;
                 int tileLayer =     (tileData >> 2) & 0x03;
 
+
+                Vector2 pxVector = Vector2(x, y);
+
+                if (tileData & 0x02)
+                    pxVector.x = (TileSize-1)- pxVector.x;
+                if (tileData & 0x01)
+                    pxVector.y = (TileSize-1) - pxVector.y;
+
                 DrawPixel(
-                    lookVector + HalfVirtualVector + Vector2(x, y),
+                    lookVector + HalfVirtualVector + pxVector,
                     PIXEL_NUMBER(tileNumber) | PIXEL_PALETTE(tilePalette) | PIXEL_LAYER(tileLayer)
                     );
             }
@@ -84,12 +103,15 @@ private:
         if ((ScreenBuffer[pos] & typeMask) > (pixelData & typeMask)) // isLayer Low?
             return;
 
+        if (enableAlpha &&  (pixelData & 0b11100000) == 0)
+            return;
+
         ScreenBuffer[pos] = pixelData;
     }
     //TILE:
-    //ID 8, palette 3, layer 2, y-ivrt 1, x-ivrt 1
+    //ID 8, palette 3, layer 2, x-ivrt 1, y-ivrt 1
 
-
+    bool enableAlpha = false;
     int TileSize;
     Vector2 VirtualVector;
 

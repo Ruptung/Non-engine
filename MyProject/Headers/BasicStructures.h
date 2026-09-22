@@ -26,4 +26,7 @@ public:
     static Vector2 zero() {
         return  Vector2(0, 0);
     }
+    static Vector2 ROVector(int x, int y) {
+        return Vector2(x, y);
+    }
 };
