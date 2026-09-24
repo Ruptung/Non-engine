@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../Headers/IRender.h"
-#include "../Headers/VirtualScreen.h"
+#include "../../Headers/IRender.h"
+#include "../../Headers/VirtualScreen.h"
 
 class TileRender : public IRender {
 public:

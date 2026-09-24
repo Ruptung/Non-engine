@@ -1,4 +1,4 @@
-#include "../Headers/IRender.h"
+#include "Headers/IRender.h"
 
 class MapRenderer : public IRender {
 public:
