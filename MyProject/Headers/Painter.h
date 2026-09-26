@@ -1,6 +1,9 @@
 #pragma once
+
 #include <cstdint>
 #include <vector>
+
+#include "BasicStructures.h"
 
 class Painter {
 public:

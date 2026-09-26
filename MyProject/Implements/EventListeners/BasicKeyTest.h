@@ -1,12 +1,19 @@
 #pragma once
 
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_keycode.h>
+
+#include "Headers/BasicStructures.h"
 #include "Headers/IEventListener.h"
 
 struct KeyFlags {
 public:
-    KeyFlags() : axis(Vector2::zero()) {}
+    KeyFlags() 
+    : axis(Vector2::zero()), exit(false) {}
 
     Vector2 axis;
+
+    bool exit;
 };
 
 
@@ -29,6 +36,9 @@ public:
                     break;
                 case SDLK_RIGHT:
                     keys.axis.x = 1;
+                    break;
+                case SDLK_Q:
+                    keys.exit = true;
                     break;
             }
         }

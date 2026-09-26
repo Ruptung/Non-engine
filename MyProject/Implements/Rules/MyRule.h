@@ -2,10 +2,10 @@
 
 #include <vector>
 
-#include "../../Headers/BasicStructures.h"
+#include "Headers/BasicStructures.h"
+#include "Headers/IRule.h"
 
-#include "../../Headers/IRule.h"
-#include "../EventListeners/BasicKeyTest.h"
+#include "Implements/EventListeners/BasicKeyTest.h"
 
 enum WorldFlag : uint16_t {
     FLAG_NONE       = 0,

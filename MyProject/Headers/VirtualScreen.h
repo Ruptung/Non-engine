@@ -1,6 +1,10 @@
 #pragma once
-#include "BasicStructures.h"
+
 #include <vector>
+#include <stdint.h>
+
+#include "BasicStructures.h"
+#include "IRule.h"
 
 #define TILE_ID(id)         ((id) << 8)
 #define TILE_PALETTE(num)   ((num) << 4)

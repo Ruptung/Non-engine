@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/home/ruptung/projects/Non-engine/MyProject/build",
+  "command": "/usr/bin/c++  -I/home/ruptung/projects/Non-engine/MyProject/. -std=gnu++14 -o CMakeFiles/MyProject.dir/main.cpp.o -c /home/ruptung/projects/Non-engine/MyProject/main.cpp",
+  "file": "/home/ruptung/projects/Non-engine/MyProject/main.cpp",
+  "output": "CMakeFiles/MyProject.dir/main.cpp.o"
+}
+]

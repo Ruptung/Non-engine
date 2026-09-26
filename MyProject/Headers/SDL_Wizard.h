@@ -1,7 +1,8 @@
 #pragma once
-#include <vector>
 #include <SDL3/SDL.h>
+#include <vector>
 
+#include "BasicStructures.h"
 /*
 *
 1. 먼저 웹에서 **《씹어먹는 C++》**의 아래 3개 파트를 가볍게 훑어보세요:

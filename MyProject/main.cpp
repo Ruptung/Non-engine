@@ -121,6 +121,9 @@ int main() {
 
             for (IEventListener *listener: listeners)
                 listener->OnEvent(event);
+
+            if (keys.exit)
+                running = false;
         }
 
         for (IRule *rule: rules)
