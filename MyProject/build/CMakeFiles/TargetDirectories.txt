@@ -1,3 +1,0 @@
-/home/ruptung/projects/Non-engine/MyProject/build/CMakeFiles/MyProject.dir
-/home/ruptung/projects/Non-engine/MyProject/build/CMakeFiles/edit_cache.dir
-/home/ruptung/projects/Non-engine/MyProject/build/CMakeFiles/rebuild_cache.dir
