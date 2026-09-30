@@ -5,16 +5,15 @@
 
 class TileRender : public IRender {
 public:
-    TileRender (std::vector<Renderable*> &renderables) : renderables(renderables) {
+    TileRender (std::vector<Renderable> &renderables) : renderables(renderables) {
     }
 
     void Render(VirtualScreen &vs) override{
-        for (Renderable *r : renderables) {
-            if (r == nullptr) continue;
+        for (const Renderable& r : renderables) {
 
-            vs.DrawTileOnGrid(r->transform->position, r->tileData);
+            vs.DrawTileOnGrid(r.transform->position, r.tileData);
         }
     }
 private:
-    std::vector<Renderable*>& renderables;
+    std::vector<Renderable>& renderables;
 };

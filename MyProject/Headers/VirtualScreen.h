@@ -5,6 +5,7 @@
 
 #include "BasicStructures.h"
 #include "IRule.h"
+#include "Object.h"
 
 #define TILE_ID(id)         ((id) << 8)
 #define TILE_PALETTE(num)   ((num) << 4)
@@ -55,7 +56,7 @@ public:
                     pxVector.y = (TileSize-1) - pxVector.y;
 
                 DrawPixel(
-                    lookVector + HalfVirtualVector + pxVector,
+                    lookVector + HalfVirtualVector + pxVector - Vector2(2, 2),
                     PIXEL_NUMBER(tileNumber) | PIXEL_PALETTE(tilePalette) | PIXEL_LAYER(tileLayer)
                     );
             }
@@ -83,7 +84,7 @@ public:
                     pxVector.y = (TileSize-1) - pxVector.y;
 
                 DrawPixel(
-                    lookVector + HalfVirtualVector + pxVector,
+                    lookVector + HalfVirtualVector + pxVector - Vector2(2, 2),
                     PIXEL_NUMBER(tileNumber) | PIXEL_PALETTE(tilePalette) | PIXEL_LAYER(tileLayer)
                     );
             }
