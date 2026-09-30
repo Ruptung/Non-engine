@@ -1,9 +1,8 @@
 cmake_minimum_required(VERSION 4.0)
 project(MyProject)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
 
 list(APPEND CMAKE_PREFIX_PATH "C:/myLibs")
 find_package(SDL3 REQUIRED CONFIG)
@@ -20,8 +19,7 @@ add_executable(MyProject main.cpp
         Implements/EventListeners/BasicKeyTest.h
         Implements/Renders/MapRenderer.h
         Implements/Renders/TileRender.h
-        Implements/Rules/MoveRule.h
-        Headers/Storage.h)
+        Implements/Rules/MyRule.h)
 
 target_include_directories(MyProject PRIVATE
     "./"

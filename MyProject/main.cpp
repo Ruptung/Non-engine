@@ -5,20 +5,18 @@
 #include "Headers/IRender.h"
 #include "Headers/IEventListener.h"
 #include "Headers/IRule.h"
-#include "Headers/Object.h"
 #include "Headers/Painter.h"
 #include "Headers/SDL_Wizard.h"
-#include "Headers/Storage.h"
 
 #include "Implements/EventListeners/BasicKeyTest.h"
 #include "Implements/Renders/MapRenderer.h"
-#include "Implements/Rules/MoveRule.h"
+#include "Implements/Rules/MyRule.h"
 #include "Implements/Renders/TileRender.h"
 
 #define SCREEN_WIDTH 512
 #define SCREEN_HEIGHT 512
-#define VIRTUAL_WIDTH 36
-#define VIRTUAL_HEIGHT 36
+#define VIRTUAL_WIDTH 32
+#define VIRTUAL_HEIGHT 32
 
 
 int main() {
@@ -82,44 +80,49 @@ int main() {
     std::vector<IRule *> rules;
 
     //properties
-
-    Storage<Transform> transforms;
-    Storage<Renderable> renderables;
-    Storage<Physic> physics;
+    std::vector<Transform *> transforms;
+    std::vector<Renderable *> Renderables;
+    std::vector<Physic *> physics;
 
     //entities
-    Entity camera = 0;
-    transforms.Add(camera , Transform(Vector2(3, 3)));
+    Transform camera = Transform(Vector2(3, 3));
+    transforms.push_back(&camera);
+    Renderables.push_back(nullptr);
 
-    Entity player = 1;
-    transforms.Add(player, Transform(Vector2(1, 1)));
-    renderables.Add(player, Renderable(&transforms.Get(player), TILE_ID(1) | TILE_LAYER(2) | TILE_PALETTE(0) | TILE_Y_IVRT));
+    Transform player = Transform(Vector2(1, 1));
+    transforms.push_back(&player);
+    Renderable renderable = Renderable(&player, TILE_ID(1) | TILE_LAYER(2) | TILE_PALETTE(0) | TILE_Y_IVRT);
+    Renderables.push_back(&renderable);
 
     //rules
     BasicKeyTest basic_key_test = BasicKeyTest(keys);
     listeners.push_back(&basic_key_test);
 
 
-    MoveRule my_rule = MoveRule(transforms.Get(player), keys, WorldSize, &WorldSpec[0][0]);
+    MyRule my_rule = MyRule(keys, &WorldSpec[0][0], transforms);
     rules.push_back(&my_rule);
 
-    TileRender tile_render = TileRender(renderables.All());
+
+    TileRender tile_render = TileRender(Renderables);
     renders.push_back(&tile_render);
 
-    MapRenderer map_renderer = MapRenderer(&WorldMap[0][0], WorldSize, VirtualVector, transforms.Get(camera).position);
+    MapRenderer map_renderer = MapRenderer(&WorldMap[0][0], WorldSize, VirtualVector, player.position);
     renders.push_back(&map_renderer);
 
 
-    VirtualScreen vs(VirtualVector, transforms.Get(camera), 4, &tiles[0][0][0]);
+    VirtualScreen vs(VirtualVector, camera, 4, &tiles[0][0][0]);
 
 
     //loop
     while (running) {
         while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_EVENT_QUIT)
+                running = false;
+
             for (IEventListener *listener: listeners)
                 listener->OnEvent(event);
 
-            if (event.type == SDL_EVENT_QUIT || keys.exit)
+            if (keys.exit)
                 running = false;
         }
 
@@ -131,7 +134,7 @@ int main() {
             render->Render(vs);
         wiz.OverwriteBuffer(painter.GetScreen(vs.GetScreen()));
 
-        SDL_Delay(41); //16ms = 60fps, 41ms = 24fps
+        SDL_Delay(41); //16 = 60fps, 41 = 24fps
     }
     return 0;
 }

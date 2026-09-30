@@ -9,14 +9,11 @@
 struct KeyFlags {
 public:
     KeyFlags() 
-    : axis(Vector2::zero()) {}
+    : axis(Vector2::zero()), exit(false) {}
 
     Vector2 axis;
 
-    //TODO Compress booleans
-
-    bool interact   = false;
-    bool exit       = false;
+    bool exit;
 };
 
 
@@ -43,9 +40,6 @@ public:
                 case SDLK_Q:
                     keys.exit = true;
                     break;
-                case SDLK_E:
-                    keys.interact = true;
-                    break;
             }
         }
         if (event.type == SDL_EVENT_KEY_UP) {
@@ -61,9 +55,6 @@ public:
                     break;
                 case SDLK_RIGHT:
                     keys.axis.x = 0;
-                    break;
-                case SDLK_E:
-                    keys.interact = false;
                     break;
             }
         }
