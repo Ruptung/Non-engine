@@ -1,4 +1,4 @@
-/MyProject/.idea
-/MyProject/cmake-build-debug
-/MyProject/compile_commands.json
+MyProject/.idea
+MyProject/cmake-build-*/
+MyProject/compile_commands.json
 
