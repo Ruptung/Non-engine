@@ -1,4 +1,3 @@
-MyProject/.idea
-MyProject/cmake-build-*/
-MyProject/compile_commands.json
-
+.idea/  .vscode/  .cache/
+cmake-build-*/  build/  CMakeFiles/  CMakeCache.txt  cmake_install.cmake  Makefile
+compile_commands.json
