@@ -2,23 +2,28 @@
 
 #include <cstdint>
 #include <vector>
+#include <assert.h>
 
 
 using Entity = uint32_t;
 
 constexpr uint32_t NONE = UINT32_MAX;
 
+
 template <typename T>
 class Storage {
 public:
     bool Has(Entity e) const { return e < sparse.size() && sparse[e] != NONE; }
 
-    T& Add(Entity e, T value) {
+    virtual bool Add(Entity e, T value) {
         if (e >= sparse.size()) sparse.resize(e + 1, NONE);
+
+        if (sparse[e] != NONE) return false;
+
         sparse[e] = dense.size();
         owners.push_back(e);
         dense.push_back(value);
-        return dense.back();
+        return true;
     }
 
     T& Get(Entity e) { return dense[sparse[e]]; }
@@ -40,4 +45,23 @@ private:
     std::vector<uint32_t> sparse;  // 엔티티 ID → dense 위치 (빈칸은 NONE)
     std::vector<T> dense;          // 실제 데이터, 빈칸 없음
     std::vector<Entity> owners;    // dense[i]의 주인
+};
+
+template <typename T, typename K>
+class ConditionStorage : public Storage<T> {
+public:
+    ConditionStorage(Storage<K> &condition)
+    : condition(condition) {}
+
+    bool Add(Entity e, T value) override {
+
+        if (condition.Has(e))
+            return Storage<T>::Add(e, value);
+
+        return false;
+    }
+
+
+private:
+    Storage<K> &condition;
 };

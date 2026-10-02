@@ -6,6 +6,7 @@
 #include "BasicStructures.h"
 #include "IRule.h"
 #include "Object.h"
+#include "Storage.h"
 
 #define TILE_ID(id)         ((id) << 8)
 #define TILE_PALETTE(num)   ((num) << 4)
@@ -19,8 +20,9 @@
 
 class VirtualScreen {
 public:
-    VirtualScreen(Vector2 VirtualVector,Transform &cam, int TileSize, uint8_t *Tiles)
-    : VirtualVector(VirtualVector), HalfVirtualVector(VirtualVector / 2), ScreenBuffer(VirtualVector.y * VirtualVector.x, 0), cam(cam), TileSize(TileSize), Tiles(Tiles){}
+    VirtualScreen(Vector2 VirtualVector, Storage<Transform> &objects, const Entity target, int TileSize, uint8_t *Tiles)
+    : VirtualVector(VirtualVector), HalfVirtualVector(VirtualVector / 2), ScreenBuffer(VirtualVector.y * VirtualVector.x, 0),
+    objects(objects), target(target), TileSize(TileSize), Tiles(Tiles){}
 
     const std::vector<uint8_t> &GetScreen() {
         return ScreenBuffer;
@@ -37,7 +39,7 @@ public:
     }
 
     void DrawTileOnWorld(Vector2 wv, uint16_t tileData) {
-        Vector2 lookVector = wv - cam.position * TileSize;
+        Vector2 lookVector = wv - objects.Get(target).position * TileSize;
 
         if (!CheckCamBoundery(lookVector)) return;
 
@@ -64,7 +66,7 @@ public:
     }
 
     void DrawTileOnGrid(Vector2 gv, uint16_t tileData) {
-        Vector2 lookVector = (gv - cam.position) * TileSize;
+        Vector2 lookVector = (gv - objects.Get(target).position) * TileSize;
 
         if (!CheckCamBoundery(lookVector)) return;
 
@@ -120,9 +122,11 @@ private:
     int TileSize;
     Vector2 VirtualVector;
 
+    Storage<Transform> &objects;
+    const Entity target;
+
     Vector2 HalfVirtualVector;
 
-    Transform &cam;
     //color 3, palette 3, layer 2
     std::vector<uint8_t> ScreenBuffer;
 

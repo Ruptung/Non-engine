@@ -18,8 +18,7 @@ struct Physic {
     Vector2 Acceleration;
 };
 struct Renderable {
-    Renderable(Transform *transform, uint16_t tileData) : transform(transform), tileData(tileData) {}
+    Renderable(uint16_t tileData) : tileData(tileData) {}
 
-    Transform *transform;
     uint16_t tileData;
 };

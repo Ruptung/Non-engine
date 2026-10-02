@@ -19,9 +19,10 @@ add_executable(MyProject main.cpp
         Headers/VirtualScreen.h
         Implements/EventListeners/BasicKeyTest.h
         Implements/Renders/MapRenderer.h
-        Implements/Renders/TileRender.h
+        Implements/Renders/ObjectRender.h
         Implements/Rules/MoveRule.h
-        Headers/Storage.h)
+        Headers/Storage.h
+        Headers/World.h)
 
 target_include_directories(MyProject PRIVATE
     "./"
