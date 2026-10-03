@@ -26,9 +26,15 @@ public:
         return true;
     }
 
-    T& Get(Entity e) { return dense[sparse[e]]; }
+    T& Get(Entity e) {
+        assert(Has(e));
+
+        return dense[sparse[e]];
+    }
 
     void Remove(Entity e) {            // swap-remove: 빈칸 없이 O(1)
+        assert(Has(e));
+
         uint32_t i = sparse[e];
         dense[i] = dense.back();
         owners[i] = owners.back();
