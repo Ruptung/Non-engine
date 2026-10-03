@@ -2,6 +2,7 @@
 .idea/
 .vscode/
 .cache/
+.claude/
 
 # CMake / build
 cmake-build-*/
@@ -13,3 +14,11 @@ Makefile
 
 # clangd (compile_commands.json은 로컬 build 경로를 가리키는 심볼릭 링크)
 compile_commands.json
+
+# Syncthing
+.stignore
+.stfolder/
+.stversions/
+.DS_Store
+.stignore_shared
+.editorconfig
