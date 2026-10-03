@@ -17,12 +17,11 @@ class SDL_Wizard
 {
 public:
 	SDL_Wizard(Vector2 VirtualVector, Vector2 ScreenVector)
-	: VirtualVector(VirtualVector), ScreenVector(ScreenVector),
+	: VirtualVector(VirtualVector), ScreenVector(ScreenVector){
+		SDL_Init(SDL_INIT_VIDEO);
 
-	window(SDL_CreateWindow("Pixel Buffer", ScreenVector.x, ScreenVector.y, 0)),
-	renderer(SDL_CreateRenderer(window, nullptr)){
-
-        SDL_Init(SDL_INIT_VIDEO);
+		window = SDL_CreateWindow("Pixel Buffer", ScreenVector.x, ScreenVector.y, 0);
+		renderer = SDL_CreateRenderer(window, nullptr);
 
 	    // 텍스처는 가상 해상도(32x32) 크기로 생성
 	    texture = SDL_CreateTexture(
@@ -40,7 +39,7 @@ public:
         SDL_DestroyTexture(texture);
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(window);
-        SDL_Quit();
+		SDL_Quit();
 	}
 
     void OverwriteBuffer(const std::vector<uint32_t>* buffer) {
