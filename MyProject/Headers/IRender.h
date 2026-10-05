@@ -2,7 +2,6 @@
 
 #include <cstdint>
 
-#include "IRule.h"
 #include "VirtualScreen.h"
 
 class IRender {

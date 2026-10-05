@@ -21,17 +21,20 @@
 class VirtualScreen {
 public:
     VirtualScreen(Vector2 VirtualVector, Storage<Transform> &objects, const Entity target, int TileSize, uint8_t *Tiles)
-    : VirtualVector(VirtualVector), HalfVirtualVector(VirtualVector / 2), ScreenBuffer(VirtualVector.y * VirtualVector.x, 0),
-    objects(objects), target(target), TileSize(TileSize), Tiles(Tiles){}
+    : VirtualVector(VirtualVector),
+    HalfVirtualVector(VirtualVector / 2),
+    ScreenBuffer(VirtualVector.y * VirtualVector.x, 0),
+    objects(objects),
+    target(target),
+    TileSize(TileSize),
+    Tiles(Tiles){}
 
     const std::vector<uint8_t> &GetScreen() {
         return ScreenBuffer;
     }
 
     void Clear() {
-        for (int i = 0; i < ScreenBuffer.size(); i++) {
-            ScreenBuffer[i] = 0x00;
-        }
+        std::fill(ScreenBuffer.begin(), ScreenBuffer.end(), 0);
     }
 
     void Alpha() {
@@ -119,16 +122,18 @@ private:
     //ID 8, palette 3, layer 2, x-ivrt 1, y-ivrt 1
 
     bool enableAlpha = false;
-    int TileSize;
+
     Vector2 VirtualVector;
+    Vector2 HalfVirtualVector;
+
+    std::vector<uint8_t> ScreenBuffer;
 
     Storage<Transform> &objects;
     const Entity target;
 
-    Vector2 HalfVirtualVector;
-
     //color 3, palette 3, layer 2
-    std::vector<uint8_t> ScreenBuffer;
+
+    int TileSize;
 
     uint8_t *Tiles;
 };
