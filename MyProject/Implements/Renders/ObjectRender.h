@@ -13,7 +13,7 @@ public:
         const std::vector<Entity> &own_renderables = renderables.Owners();
         const std::vector<Renderable> &dense_renderables = renderables.All();
 
-        for (int i = 0; i < static_cast<int>(dense_renderables.size()); i++) {
+        for (size_t i = 0; i < dense_renderables.size(); i++) {
             vs.DrawTileOnGrid(transforms.Get(own_renderables[i]).position, dense_renderables[i].tileData);
         }
     }

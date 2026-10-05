@@ -1,10 +1,10 @@
 #pragma once
 
 #include <vector>
+#include <algorithm>
 #include <stdint.h>
 
 #include "BasicStructures.h"
-#include "IRule.h"
 #include "Object.h"
 #include "Storage.h"
 
@@ -118,21 +118,20 @@ private:
 
         ScreenBuffer[pos] = pixelData;
     }
-    //TILE:
-    //ID 8, palette 3, layer 2, x-ivrt 1, y-ivrt 1
 
     bool enableAlpha = false;
 
     Vector2 VirtualVector;
     Vector2 HalfVirtualVector;
 
+    //TILE:
+    //ID 8, palette 3, layer 2, x-ivrt 1, y-ivrt 1
+    //PIXEL:
+    //color 3, palette 3, layer 2
     std::vector<uint8_t> ScreenBuffer;
 
     Storage<Transform> &objects;
     const Entity target;
-
-    //color 3, palette 3, layer 2
-
     int TileSize;
 
     uint8_t *Tiles;
