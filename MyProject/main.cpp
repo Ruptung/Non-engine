@@ -83,40 +83,32 @@ int main() {
     std::vector<IRule *> rules;
 
     //properties
-
     World world;
-
-    Storage<Transform> transforms;
-    ConditionStorage<Renderable, Transform> renderables = {transforms};
-    ConditionStorage<Physic, Transform> physics = {transforms};
 
     //entities
     Entity camera = world.CreateEntity();
-    transforms.Add(camera , Transform(Vector2(3, 3)));
+    world.AddComponent(camera , Transform(Vector2(3, 3)));
 
     Entity player = world.CreateEntity();
-    transforms.Add(player, Transform(Vector2(1, 1)));
-    renderables.Add(player, Renderable(TILE_ID(1) | TILE_LAYER(2) | TILE_PALETTE(0) | TILE_Y_IVRT));
+    world.AddComponent(player, Transform(Vector2(1, 1)));
+    world.AddComponent(player, Renderable(TILE_ID(1) | TILE_LAYER(2) | TILE_PALETTE(0) | TILE_Y_IVRT));
 
     //rules
     BasicKeyTest basic_key_test = BasicKeyTest(keys);
     listeners.push_back(&basic_key_test);
 
-
-    MoveRule my_rule = MoveRule(transforms, player, keys, WorldSize, &WorldSpec[0][0]);
+    MoveRule my_rule = MoveRule(world.GetStorage<Transform>(), player, keys, WorldSize, &WorldSpec[0][0]);
     rules.push_back(&my_rule);
 
-    ObjectRender tile_render = ObjectRender(renderables, transforms);
+    ObjectRender tile_render = ObjectRender(world.GetStorage<Renderable>(), world.GetStorage<Transform>());
     renders.push_back(&tile_render);
 
-    MapRenderer map_renderer = MapRenderer(&WorldMap[0][0], WorldSize, VirtualVector, transforms, camera);
+    MapRenderer map_renderer = MapRenderer(&WorldMap[0][0], WorldSize, VirtualVector, world.GetStorage<Transform>(), camera);
     renders.push_back(&map_renderer);
 
+    VirtualScreen vs(VirtualVector, world.GetStorage<Transform>(), camera, 4, &tiles[0][0][0]);
 
-    VirtualScreen vs(VirtualVector, transforms, camera, 4, &tiles[0][0][0]);
-
-
-    //loop
+    // //loop
     while (running) {
         while (SDL_PollEvent(&event)) {
             for (IEventListener *listener: listeners)
