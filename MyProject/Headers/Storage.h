@@ -63,22 +63,3 @@ private:
     std::vector<T> dense;          // 실제 데이터, 빈칸 없음
     std::vector<Entity> owners;    // dense[i]의 주인
 };
-
-template <typename T, typename K>
-class ConditionStorage : public Storage<T> {
-public:
-    ConditionStorage(Storage<K> &condition)
-    : condition(condition) {}
-
-    bool Add(Entity e, T value) override {
-
-        if (condition.Has(e))
-            return Storage<T>::Add(e, value);
-
-        return false;
-    }
-
-
-private:
-    Storage<K> &condition;
-};
