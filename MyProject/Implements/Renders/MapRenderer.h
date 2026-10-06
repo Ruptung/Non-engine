@@ -2,11 +2,13 @@
 
 class MapRenderer : public IRender {
 public:
-    MapRenderer(uint16_t *map, Vector2 worldSize, Vector2 screenSize, Vector2 &camera)
-    : map(map), worldSize(worldSize), screenSize(screenSize), camera(camera){
+    MapRenderer(uint16_t *map, Vector2 worldSize, Vector2 screenSize, Storage<Transform> &transforms, const Entity target)
+    : map(map), worldSize(worldSize), screenSize(screenSize), transforms(transforms), target(target){
     }
 
     void Render(VirtualScreen &vs) override {
+        Vector2 camera = transforms.Get(target).position;
+
         for (int y = 0; y < screenSize.y; y++) {
             for (int x = 0; x < screenSize.x; x++) {
                 Vector2 pos = camera + Vector2(x, y) - screenSize / 2;
@@ -25,5 +27,6 @@ private:
     uint16_t *map;
     Vector2 worldSize;
     Vector2 screenSize;
-    Vector2 &camera;
+    Storage<Transform> &transforms;
+    const Entity target;
 };

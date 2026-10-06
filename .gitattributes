@@ -1,0 +1,2 @@
+# 모든 OS에서 텍스트 파일 줄바꿈을 LF로 통일 (Syncthing 동기화 시 CRLF/LF 충돌 방지)
+* text=auto eol=lf

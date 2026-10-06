@@ -9,11 +9,12 @@
 #include "Headers/Painter.h"
 #include "Headers/SDL_Wizard.h"
 #include "Headers/Storage.h"
+#include "Headers/World.h"
 
 #include "Implements/EventListeners/BasicKeyTest.h"
 #include "Implements/Renders/MapRenderer.h"
 #include "Implements/Rules/MoveRule.h"
-#include "Implements/Renders/TileRender.h"
+#include "Implements/Renders/ObjectRender.h"
 
 #define SCREEN_WIDTH 512
 #define SCREEN_HEIGHT 512
@@ -82,38 +83,32 @@ int main() {
     std::vector<IRule *> rules;
 
     //properties
-
-    Storage<Transform> transforms;
-    Storage<Renderable> renderables;
-    Storage<Physic> physics;
+    World world;
 
     //entities
-    Entity camera = 0;
-    transforms.Add(camera , Transform(Vector2(3, 3)));
+    Entity camera = world.CreateEntity();
+    world.AddComponent(camera , Transform(Vector2(3, 3)));
 
-    Entity player = 1;
-    transforms.Add(player, Transform(Vector2(1, 1)));
-    renderables.Add(player, Renderable(&transforms.Get(player), TILE_ID(1) | TILE_LAYER(2) | TILE_PALETTE(0) | TILE_Y_IVRT));
+    Entity player = world.CreateEntity();
+    world.AddComponent(player, Transform(Vector2(1, 1)));
+    world.AddComponent(player, Renderable(TILE_ID(1) | TILE_LAYER(2) | TILE_PALETTE(0) | TILE_Y_IVRT));
 
     //rules
     BasicKeyTest basic_key_test = BasicKeyTest(keys);
     listeners.push_back(&basic_key_test);
 
-
-    MoveRule my_rule = MoveRule(transforms.Get(player), keys, WorldSize, &WorldSpec[0][0]);
+    MoveRule my_rule = MoveRule(world.GetStorage<Transform>(), player, keys, WorldSize, &WorldSpec[0][0]);
     rules.push_back(&my_rule);
 
-    TileRender tile_render = TileRender(renderables.All());
+    ObjectRender tile_render = ObjectRender(world.GetStorage<Renderable>(), world.GetStorage<Transform>());
     renders.push_back(&tile_render);
 
-    MapRenderer map_renderer = MapRenderer(&WorldMap[0][0], WorldSize, VirtualVector, transforms.Get(camera).position);
+    MapRenderer map_renderer = MapRenderer(&WorldMap[0][0], WorldSize, VirtualVector, world.GetStorage<Transform>(), camera);
     renders.push_back(&map_renderer);
 
+    VirtualScreen vs(VirtualVector, world.GetStorage<Transform>(), camera, 4, &tiles[0][0][0]);
 
-    VirtualScreen vs(VirtualVector, transforms.Get(camera), 4, &tiles[0][0][0]);
-
-
-    //loop
+    // //loop
     while (running) {
         while (SDL_PollEvent(&event)) {
             for (IEventListener *listener: listeners)

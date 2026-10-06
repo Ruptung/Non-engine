@@ -15,11 +15,16 @@ enum WorldFlag : uint16_t {
 
 class MoveRule : public IRule {
 public:
-    MoveRule(Transform &player, KeyFlags &keys, Vector2 &WorldSize, uint16_t *WorldSpec) :
-    player(player), keys(keys), WorldSize(WorldSize), WorldSpec(WorldSpec) {};
-    void Update() override {
+    MoveRule(Storage<Transform> &transforms, Entity target, KeyFlags &keys, Vector2 &WorldSize, uint16_t *WorldSpec)
+    : transforms(transforms),
+    target(target),
+    WorldSize(WorldSize),
+    WorldSpec(WorldSpec),
+    keys(keys) {
+    }
 
-        //Move
+    void Update() override {
+        Transform &player = transforms.Get(target);
         Vector2 moveto = player.position + keys.axis;
 
         if ((moveto.x >= 0 && moveto.x < WorldSize.x) && (moveto.y >= 0 && moveto.y < WorldSize.y)) {
@@ -31,8 +36,10 @@ public:
         }
         player.position = player.position + keys.axis;
     }
+    
 private:
-    Transform &player;
+    Storage<Transform> &transforms;
+    Entity target;
     Vector2 &WorldSize;
     uint16_t *WorldSpec;
     KeyFlags &keys;
