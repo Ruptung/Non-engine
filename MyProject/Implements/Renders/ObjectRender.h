@@ -14,7 +14,7 @@ public:
         const std::vector<Renderable> &dense_renderables = renderables.All();
 
         for (size_t i = 0; i < dense_renderables.size(); i++) {
-            vs.DrawTileOnGrid(transforms.Get(own_renderables[i]).position, dense_renderables[i].tileData);
+            vs.DrawTileOnWorld(transforms.Get(own_renderables[i]).position, dense_renderables[i].tileData);
         }
     }
 private:
