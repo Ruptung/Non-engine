@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "BasicStructures.h"
+#include "Storage.h"
 
 struct Transform {
     Transform(Vector2 position) : position(position) {
@@ -21,4 +22,8 @@ struct Renderable {
     Renderable(uint16_t tileData) : tileData(tileData) {}
 
     uint16_t tileData;
+};
+struct Collider {
+    // isTrigger(it Stops?) 1, WIP...
+    uint8_t collideData;
 };

@@ -21,7 +21,14 @@ add_executable(MyProject main.cpp
         Implements/Renders/ObjectRender.h
         Implements/Rules/MoveRule.h
         Headers/Storage.h
-        Headers/World.h)
+        Headers/World.h
+        Implements/Rules/ColliderRule.h
+        Implements/PersonalScript/PersonalScriptTest.h
+        Headers/IScript.h
+        Headers/ICollide.h
+        Implements/PrintOnCollide.h
+        Implements/HurtOnCollide.h
+)
 
 target_include_directories(MyProject PRIVATE
     "./"

@@ -5,5 +5,6 @@
 class IEventListener {
 public:
     virtual ~IEventListener() = default;
+
     virtual void OnEvent(const SDL_Event& event) = 0;
 };

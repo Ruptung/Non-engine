@@ -54,6 +54,15 @@ public:
         return *static_cast<Storage<T>*>(i->second.get());
     }
 
+    std::vector<ICollide*> GetCollides(Entity e) {
+        std::vector<ICollide*> collides;
+        for (auto& [key, storage] : TypeStorage) {
+            if (storage->GetCollide(e)) {
+                collides.push_back(storage->GetCollide(e));
+            }
+        }
+        return collides;
+    }
 
 private:
     template<typename T>

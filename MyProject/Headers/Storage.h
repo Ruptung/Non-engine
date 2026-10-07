@@ -4,7 +4,9 @@
 #include <vector>
 #include <assert.h>
 
+//#include "ICollide.h"
 
+class ICollide;
 using Entity = uint32_t;
 
 constexpr uint32_t NONE = UINT32_MAX;
@@ -16,6 +18,8 @@ public:
     virtual bool Has(Entity e) const = 0;
 
     virtual void Remove(Entity e) = 0;
+
+    virtual ICollide* GetCollide(Entity e) = 0;
 };
 
 template <typename T>
@@ -53,11 +57,19 @@ public:
         sparse[e] = NONE;
     }
 
+    ICollide* GetCollide(Entity e) override {
+        if constexpr (std::is_base_of_v<ICollide, T>) {          // 1. T가 ICollide를 상속했나? (아까 Describe 예제의 그 줄)
+            if (!Has(e)) return nullptr;
+            return &Get(e);                 // 2. e의 컴포넌트 주소 (Get(e)는 T&를 돌려줌)
+        } else {
+            return nullptr;             // ICollide가 아닌 타입은 항상 "없음"
+        }
+    }
+
     // 시스템은 dense만 순회하고, 필요하면 owners[i]로 엔티티 ID를 얻음
     std::vector<T>& All() { return dense; }
 
     const std::vector<Entity>& Owners() const { return owners; }
-
 private:
     std::vector<uint32_t> sparse;  // 엔티티 ID → dense 위치 (빈칸은 NONE)
     std::vector<T> dense;          // 실제 데이터, 빈칸 없음

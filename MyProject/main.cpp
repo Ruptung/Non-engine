@@ -2,19 +2,24 @@
 #include <vector>
 
 #include "Headers/BasicStructures.h"
+#include "Headers/ICollide.h"
 #include "Headers/IRender.h"
 #include "Headers/IEventListener.h"
 #include "Headers/IRule.h"
+#include "Headers/IScript.h"
 #include "Headers/Object.h"
 #include "Headers/Painter.h"
 #include "Headers/SDL_Wizard.h"
 #include "Headers/Storage.h"
 #include "Headers/World.h"
+#include "Implements/HurtOnCollide.h"
+#include "Implements/PrintOnCollide.h"
 
 #include "Implements/EventListeners/BasicKeyTest.h"
 #include "Implements/Renders/MapRenderer.h"
 #include "Implements/Rules/MoveRule.h"
 #include "Implements/Renders/ObjectRender.h"
+#include "Implements/Rules/ColliderRule.h"
 
 #define SCREEN_WIDTH 512
 #define SCREEN_HEIGHT 512
@@ -57,14 +62,14 @@ int main() {
 
     Vector2 WorldSize = Vector2(5, 5);
     uint16_t WorldMap[5][5] = {
-        {SampleTile, SampleTile, SampleTile, SampleTile, SampleTile},
+        {0, SampleTile, SampleTile, SampleTile, SampleTile},
         {SampleTile, 0, 0, 0, SampleTile},
         {SampleTile, 0, 0, 0, 0},
         {SampleTile, 0, 0, 0, SampleTile},
         {SampleTile, SampleTile, SampleTile, SampleTile, SampleTile}
     };
     uint16_t WorldSpec[5][5] = {
-        {WorldFlag::FLAG_SOLID, WorldFlag::FLAG_SOLID,  WorldFlag::FLAG_SOLID,  WorldFlag::FLAG_SOLID,  WorldFlag::FLAG_SOLID},
+        {WorldFlag::FLAG_NONE, WorldFlag::FLAG_SOLID,  WorldFlag::FLAG_SOLID,  WorldFlag::FLAG_SOLID,  WorldFlag::FLAG_SOLID},
         {WorldFlag::FLAG_SOLID, WorldFlag::FLAG_NONE,   WorldFlag::FLAG_NONE,   WorldFlag::FLAG_NONE,   WorldFlag::FLAG_SOLID},
         {WorldFlag::FLAG_SOLID, WorldFlag::FLAG_NONE,   WorldFlag::FLAG_NONE,   WorldFlag::FLAG_NONE,   WorldFlag::FLAG_NONE},
         {WorldFlag::FLAG_SOLID, WorldFlag::FLAG_NONE,   WorldFlag::FLAG_NONE,   WorldFlag::FLAG_NONE,   WorldFlag::FLAG_SOLID},
@@ -81,6 +86,7 @@ int main() {
     std::vector<IEventListener *> listeners;
     std::vector<IRender *> renders;
     std::vector<IRule *> rules;
+    std::vector<IScript *> scripts;
 
     //properties
     World world;
@@ -90,23 +96,44 @@ int main() {
     world.AddComponent(camera , Transform(Vector2(3, 3)));
 
     Entity player = world.CreateEntity();
-    world.AddComponent(player, Transform(Vector2(1, 1)));
+    world.AddComponent(player, Transform(Vector2(0, 0)));
     world.AddComponent(player, Renderable(TILE_ID(1) | TILE_LAYER(2) | TILE_PALETTE(0) | TILE_Y_IVRT));
+    world.AddComponent(player, Collider());
 
-    //rules
+
+
+    Entity Dummy = world.CreateEntity();
+    world.AddComponent(Dummy, Transform(Vector2(3, 3)));
+    world.AddComponent(Dummy, Renderable(TILE_ID(1) | TILE_LAYER(2) | TILE_PALETTE(0) | TILE_Y_IVRT));
+    world.AddComponent(Dummy, Collider());
+
+    world.AddComponent(player, PrintOnCollide());
+    world.AddComponent(Dummy, HurtOnCollide());
+
+    //Interface
     BasicKeyTest basic_key_test = BasicKeyTest(keys);
-    listeners.push_back(&basic_key_test);
 
     MoveRule my_rule = MoveRule(world.GetStorage<Transform>(), player, keys, WorldSize, &WorldSpec[0][0]);
-    rules.push_back(&my_rule);
+    ColliderRule collider_rule = ColliderRule(world.GetStorage<Collider>(), world.GetStorage<Transform>(), world);
 
     ObjectRender tile_render = ObjectRender(world.GetStorage<Renderable>(), world.GetStorage<Transform>());
-    renders.push_back(&tile_render);
-
     MapRenderer map_renderer = MapRenderer(&WorldMap[0][0], WorldSize, VirtualVector, world.GetStorage<Transform>(), camera);
+
+
+    //Push Interface
+    listeners.push_back(&basic_key_test);
+
+    rules.push_back(&my_rule);
+    rules.push_back(&collider_rule);
+
+    renders.push_back(&tile_render);
     renders.push_back(&map_renderer);
 
-    VirtualScreen vs(VirtualVector, world.GetStorage<Transform>(), camera, 4, &tiles[0][0][0]);
+    VirtualScreen vs(VirtualVector, world.GetComponent<Transform>(camera), 4, &tiles[0][0][0]);
+
+
+    for (IScript *script: scripts)
+        script->Start();
 
     // //loop
     while (running) {
@@ -124,6 +151,10 @@ int main() {
         vs.Clear();
         for (IRender *render: renders)
             render->Render(vs);
+
+        for (IScript *script: scripts)
+            script->Update();
+
         wiz.OverwriteBuffer(painter.GetScreen(vs.GetScreen()));
 
         SDL_Delay(41); //16ms = 60fps, 41ms = 24fps

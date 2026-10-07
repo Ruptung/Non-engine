@@ -2,11 +2,9 @@
 
 #include <vector>
 #include <algorithm>
-#include <stdint.h>
 
 #include "BasicStructures.h"
 #include "Object.h"
-#include "Storage.h"
 
 #define TILE_ID(id)         ((id) << 8)
 #define TILE_PALETTE(num)   ((num) << 4)
@@ -20,11 +18,11 @@
 
 class VirtualScreen {
 public:
-    VirtualScreen(Vector2 VirtualVector, Storage<Transform> &objects, const Entity target, int TileSize, uint8_t *Tiles)
+    VirtualScreen(Vector2 VirtualVector, Transform &target, int TileSize, uint8_t *Tiles)
     : VirtualVector(VirtualVector),
     HalfVirtualVector(VirtualVector / 2),
     ScreenBuffer(VirtualVector.y * VirtualVector.x, 0),
-    objects(objects),
+
     target(target),
     TileSize(TileSize),
     Tiles(Tiles){}
@@ -42,7 +40,7 @@ public:
     }
 
     void DrawTileOnWorld(Vector2 wv, uint16_t tileData) {
-        Vector2 lookVector = wv - objects.Get(target).position * TileSize;
+        Vector2 lookVector = wv - target.position * TileSize;
 
         if (!CheckCamBoundery(lookVector)) return;
 
@@ -69,31 +67,9 @@ public:
     }
 
     void DrawTileOnGrid(Vector2 gv, uint16_t tileData) {
-        Vector2 lookVector = (gv - objects.Get(target).position) * TileSize;
+        Vector2 wv = gv * TileSize;
 
-        if (!CheckCamBoundery(lookVector)) return;
-
-        int pos = (tileData >> 8) *TileSize*TileSize;
-        for (int y = 0; y < TileSize; ++y) {
-            for (int x = 0; x < TileSize; ++x) {
-                int tileNumber =    Tiles[pos + y * TileSize + x];
-                int tilePalette =   (tileData >> 4) & 0x07;
-                int tileLayer =     (tileData >> 2) & 0x03;
-
-
-                Vector2 pxVector = Vector2(x, y);
-
-                if (tileData & 0x02)
-                    pxVector.x = (TileSize-1)- pxVector.x;
-                if (tileData & 0x01)
-                    pxVector.y = (TileSize-1) - pxVector.y;
-
-                DrawPixel(
-                    lookVector + HalfVirtualVector + pxVector - Vector2(2, 2),
-                    PIXEL_NUMBER(tileNumber) | PIXEL_PALETTE(tilePalette) | PIXEL_LAYER(tileLayer)
-                    );
-            }
-        }
+        DrawTileOnWorld(wv, tileData);
     }
 
 
@@ -130,8 +106,7 @@ private:
     //color 3, palette 3, layer 2
     std::vector<uint8_t> ScreenBuffer;
 
-    Storage<Transform> &objects;
-    const Entity target;
+    Transform &target;
     int TileSize;
 
     uint8_t *Tiles;

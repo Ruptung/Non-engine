@@ -1,3 +1,6 @@
+#pragma once
+
+#include "Headers/BasicStructures.h"
 #include "Headers/IRender.h"
 
 class MapRenderer : public IRender {
@@ -18,7 +21,7 @@ public:
 
                 uint16_t tileIndex = map[pos.y * worldSize.x + pos.x];
 
-                vs.DrawTileOnGrid(pos, tileIndex);
+                vs.DrawTileOnWorld(pos * 4, tileIndex);
             }
         }
     }
