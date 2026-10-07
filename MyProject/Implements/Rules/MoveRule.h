@@ -1,8 +1,6 @@
 #pragma once
 
-#include <iostream>
-#include <ostream>
-#include <vector>
+#include <cmath>
 
 #include "Headers/BasicStructures.h"
 #include "Headers/IRule.h"
