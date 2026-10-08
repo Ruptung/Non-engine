@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdio>
 
-#include "Headers/IScript.h"
+#include "../../Headers/Interfaces/IScript.h"
 
 class PersonalScriptTest : public IScript {
 public:

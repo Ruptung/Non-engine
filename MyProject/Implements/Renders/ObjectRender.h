@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Headers/IRender.h"
+#include "../../Headers/Interfaces/IRender.h"
 #include "Headers/VirtualScreen.h"
 
 class ObjectRender : public IRender {

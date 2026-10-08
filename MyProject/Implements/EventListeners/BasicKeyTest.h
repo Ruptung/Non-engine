@@ -4,7 +4,7 @@
 #include <SDL3/SDL_keycode.h>
 
 #include "Headers/BasicStructures.h"
-#include "Headers/IEventListener.h"
+#include "../../Headers/Interfaces/IEventListener.h"
 
 struct KeyFlags {
 public:

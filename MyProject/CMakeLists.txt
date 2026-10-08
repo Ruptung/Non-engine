@@ -9,9 +9,9 @@ find_package(SDL3 REQUIRED CONFIG)
 
 add_executable(MyProject main.cpp
         Headers/BasicStructures.h
-        Headers/IEventListener.h
-        Headers/IRender.h
-        Headers/IRule.h
+        Headers/Interfaces/IEventListener.h
+        Headers/Interfaces/IRender.h
+        Headers/Interfaces/IRule.h
         Headers/Object.h
         Headers/Painter.h
         Headers/SDL_Wizard.h
@@ -24,8 +24,8 @@ add_executable(MyProject main.cpp
         Headers/World.h
         Implements/Rules/ColliderRule.h
         Implements/PersonalScript/PersonalScriptTest.h
-        Headers/IScript.h
-        Headers/ICollide.h
+        Headers/Interfaces/IScript.h
+        Headers/Interfaces/ICollide.h
         Implements/PrintOnCollide.h
         Implements/HurtOnCollide.h
 )

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Headers/BasicStructures.h"
-#include "Headers/IRule.h"
+#include "../../Headers/Interfaces/IRule.h"
 #include "Headers/Object.h"
 #include "Headers/Storage.h"
 #include "Headers/World.h"
@@ -43,8 +43,11 @@ private:
         Vector2 object_pos = object.position;
         Vector2 target_pos = target.position;
 
-        if (object_pos.x + 3 < target_pos.x || object_pos.x > target_pos.x + 3) { return false; }
-        if (object_pos.y + 3 < target_pos.y || object_pos.y > target_pos.y + 3) { return false; }
+        Vector2 object_scale = object.scale - Vector2::one();
+        Vector2 target_scale = target.scale - Vector2::one();
+
+        if (object_pos.x + object_scale.x < target_pos.x || object_pos.x > target_pos.x + target_scale.x) { return false; }
+        if (object_pos.y + object_scale.y < target_pos.y || object_pos.y > target_pos.y + target_scale.y) { return false; }
 
         return true;
     }

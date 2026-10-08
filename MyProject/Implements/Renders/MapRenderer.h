@@ -1,12 +1,12 @@
 #pragma once
 
 #include "Headers/BasicStructures.h"
-#include "Headers/IRender.h"
+#include "../../Headers/Interfaces/IRender.h"
 
 class MapRenderer : public IRender {
 public:
-    MapRenderer(uint16_t *map, Vector2 worldSize, Vector2 screenSize, Storage<Transform> &transforms, const Entity target)
-    : map(map), worldSize(worldSize), screenSize(screenSize), transforms(transforms), target(target){
+    MapRenderer(uint16_t *map, Vector2 worldSize, Vector2 screenSize, Vector2 tileSize, Storage<Transform> &transforms, const Entity target)
+    : map(map), worldSize(worldSize), screenSize(screenSize), tileSize(tileSize), transforms(transforms), target(target){
     }
 
     void Render(VirtualScreen &vs) override {
@@ -21,7 +21,7 @@ public:
 
                 uint16_t tileIndex = map[pos.y * worldSize.x + pos.x];
 
-                vs.DrawTileOnWorld(pos * 4, tileIndex);
+                vs.DrawTileOnWorld(Vector2(pos.x * tileSize.x, pos.y * tileSize.y), tileIndex);
             }
         }
     }
@@ -30,6 +30,7 @@ private:
     uint16_t *map;
     Vector2 worldSize;
     Vector2 screenSize;
+    Vector2 tileSize;
     Storage<Transform> &transforms;
     const Entity target;
 };

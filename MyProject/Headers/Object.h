@@ -7,10 +7,19 @@
 #include "Storage.h"
 
 struct Transform {
-    Transform(Vector2 position) : position(position) {
+    Transform(Vector2 position)
+    : position(position),
+    scale(Vector2::zero()) {
+
+    }
+
+    Transform(Vector2 position, Vector2 scale)
+    : position(position),
+    scale(scale){
     }
 
     Vector2 position;
+    Vector2 scale;
 };
 struct Physic {
     Physic() : Velocity(Vector2::zero()), Acceleration(Vector2::zero()) {}

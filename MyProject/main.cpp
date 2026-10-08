@@ -2,16 +2,18 @@
 #include <vector>
 
 #include "Headers/BasicStructures.h"
-#include "Headers/ICollide.h"
-#include "Headers/IRender.h"
-#include "Headers/IEventListener.h"
-#include "Headers/IRule.h"
-#include "Headers/IScript.h"
+
+#include "Headers/Interfaces/IRender.h"
+#include "Headers/Interfaces/IEventListener.h"
+#include "Headers/Interfaces/IRule.h"
+#include "Headers/Interfaces/IScript.h"
+
 #include "Headers/Object.h"
 #include "Headers/Painter.h"
 #include "Headers/SDL_Wizard.h"
 #include "Headers/Storage.h"
 #include "Headers/World.h"
+
 #include "Implements/HurtOnCollide.h"
 #include "Implements/PrintOnCollide.h"
 
@@ -37,6 +39,9 @@ int main() {
     uint32_t colors[][8] = {
         0x00000000, 0xFFFFFFFF, 0xFF777777, 0xFF0000FF
     };
+
+    //TODO Make TileData Structure which compress all the tile data.
+    Vector2 tileSize = Vector2(4, 4 );
     uint8_t tiles[][4][4] = {
         {
             {0, 0, 0, 0},
@@ -60,8 +65,8 @@ int main() {
 
     uint16_t SampleTile = TILE_ID(2) | TILE_PALETTE(0) | TILE_LAYER(1);
 
-    Vector2 WorldSize = Vector2(5, 5);
-    uint16_t WorldMap[5][5] = {
+    Vector2 WorldSize = Vector2(20, 20);
+    uint16_t WorldMap[20][20] = {
         {0, SampleTile, SampleTile, SampleTile, SampleTile},
         {SampleTile, 0, 0, 0, SampleTile},
         {SampleTile, 0, 0, 0, 0},
@@ -96,15 +101,15 @@ int main() {
     world.AddComponent(camera , Transform(Vector2(3, 3)));
 
     Entity player = world.CreateEntity();
-    world.AddComponent(player, Transform(Vector2(0, 0)));
+    world.AddComponent(player, Transform(Vector2(0, 0), Vector2(4, 4)));
     world.AddComponent(player, Renderable(TILE_ID(1) | TILE_LAYER(2) | TILE_PALETTE(0) | TILE_Y_IVRT));
     world.AddComponent(player, Collider());
 
 
 
     Entity Dummy = world.CreateEntity();
-    world.AddComponent(Dummy, Transform(Vector2(3, 3)));
-    world.AddComponent(Dummy, Renderable(TILE_ID(1) | TILE_LAYER(2) | TILE_PALETTE(0) | TILE_Y_IVRT));
+    world.AddComponent(Dummy, Transform(Vector2(3, 3), Vector2(4, 4)));
+    world.AddComponent(Dummy, Renderable(TILE_ID(1) | TILE_LAYER(2) | TILE_PALETTE(0)));
     world.AddComponent(Dummy, Collider());
 
     world.AddComponent(player, PrintOnCollide());
@@ -117,7 +122,7 @@ int main() {
     ColliderRule collider_rule = ColliderRule(world.GetStorage<Collider>(), world.GetStorage<Transform>(), world);
 
     ObjectRender tile_render = ObjectRender(world.GetStorage<Renderable>(), world.GetStorage<Transform>());
-    MapRenderer map_renderer = MapRenderer(&WorldMap[0][0], WorldSize, VirtualVector, world.GetStorage<Transform>(), camera);
+    MapRenderer map_renderer = MapRenderer(&WorldMap[0][0], WorldSize, VirtualVector, tileSize, world.GetStorage<Transform>(), camera);
 
 
     //Push Interface
@@ -156,7 +161,6 @@ int main() {
             script->Update();
 
         wiz.OverwriteBuffer(painter.GetScreen(vs.GetScreen()));
-
         SDL_Delay(41); //16ms = 60fps, 41ms = 24fps
     }
     return 0;
