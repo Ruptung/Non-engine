@@ -1,36 +1,46 @@
 #pragma once
 
 #include "Headers/BasicStructures.h"
-#include "../../Headers/Interfaces/IRender.h"
+#include "Headers/Interfaces/IRender.h"
+
+
 
 class MapRenderer : public IRender {
 public:
-    MapRenderer(uint16_t *map, Vector2 worldSize, Vector2 screenSize, Vector2 tileSize, Storage<Transform> &transforms, const Entity target)
-    : map(map), worldSize(worldSize), screenSize(screenSize), tileSize(tileSize), transforms(transforms), target(target){
+    MapRenderer(const ScreenSet &ScreenSet, const TileSet &TileSet, const WorldSet &WorldSet, Storage<Transform> &transforms, const Entity target)
+    : ScreenVector(ScreenSet.VirtualVector),
+    TileSize(TileSet.TileSize),
+    WorldSize(WorldSet.WorldSize),
+    WorldMap(WorldSet.WorldMap),
+    transforms(transforms),
+    target(target) {
     }
 
     void Render(VirtualScreen &vs) override {
         Vector2 camera = transforms.Get(target).position;
 
-        for (int y = 0; y < screenSize.y; y++) {
-            for (int x = 0; x < screenSize.x; x++) {
-                Vector2 pos = camera + Vector2(x, y) - screenSize / 2;
+        Vector2 topLeft = camera - ScreenVector / 2;
+        Vector2 bottomRight = topLeft + ScreenVector - Vector2::one();
 
-                if (pos.x < 0 || pos.x >= worldSize.x) continue;
-                if (pos.y < 0 || pos.y >= worldSize.y) continue;
+        Vector2 first = topLeft / TileSize;
+        Vector2 last = bottomRight / TileSize;
 
-                uint16_t tileIndex = map[pos.y * worldSize.x + pos.x];
+        for (int y = first.y; y <= last.y; y++) {
+            for (int x = first.x; x <= last.x; x++) {
+                if (x < 0 || x >= WorldSize.x) continue;
+                if (y < 0 || y >= WorldSize.y) continue;
 
-                vs.DrawTileOnWorld(Vector2(pos.x * tileSize.x, pos.y * tileSize.y), tileIndex);
+                vs.DrawTileOnGrid(Vector2(x, y), WorldMap[y*WorldSize.x + x]);
             }
         }
     }
 
 private:
-    uint16_t *map;
-    Vector2 worldSize;
-    Vector2 screenSize;
-    Vector2 tileSize;
+    Vector2 ScreenVector;
+    Vector2 TileSize;
+
+    Vector2 WorldSize;
+    uint16_t *WorldMap;
     Storage<Transform> &transforms;
     const Entity target;
 };

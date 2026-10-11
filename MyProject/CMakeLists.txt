@@ -28,6 +28,7 @@ add_executable(MyProject main.cpp
         Headers/Interfaces/ICollide.h
         Implements/PrintOnCollide.h
         Implements/HurtOnCollide.h
+        Headers/TileSystem.h
 )
 
 target_include_directories(MyProject PRIVATE

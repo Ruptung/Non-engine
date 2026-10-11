@@ -1,9 +1,7 @@
 #pragma once
 
-#include <cmath>
-
 #include "Headers/BasicStructures.h"
-#include "../../Headers/Interfaces/IRule.h"
+#include "Headers/Interfaces/IRule.h"
 #include "Headers/Storage.h"
 #include "Headers/Object.h"
 
@@ -15,13 +13,15 @@ enum WorldFlag : uint16_t {
     // WIP ...
 };
 
+//This is Experiment Rule this will be removed.
 class MoveRule : public IRule {
 public:
-    MoveRule(Storage<Transform> &transforms, Entity target, KeyFlags &keys, Vector2 &WorldSize, uint16_t *WorldSpec)
+    MoveRule(Storage<Transform> &transforms, Entity target, KeyFlags &keys, WorldSet WorldSet, TileSet TileSet)
     : transforms(transforms),
     target(target),
-    WorldSize(WorldSize),
-    WorldSpec(WorldSpec),
+    WorldSize(WorldSet.WorldSize),
+    WorldSpec(WorldSet.WorldSpec),
+    TileSize(TileSet.TileSize),
     keys(keys) {
     }
 
@@ -54,16 +54,19 @@ private:
             pivot2.y -= scale.y;
         }
 
-        //TODO Make this divide by 4 to Grid/Tile Size.
-        int flatten1 = std::ceil(pivot1.y / 4) * WorldSize.x / 4 + std::ceil(pivot1.x / 4);
-        int flatten2 = std::ceil(pivot2.y / 4) * WorldSize.x / 4 + std::ceil(pivot2.x / 4);
+        Vector2 gp1 = pivot1 / TileSize;
+        Vector2 gp2 = pivot2 / TileSize;
 
-        if ((pivot1.x >= 0 && pivot1.x < WorldSize.x) && (pivot1.y >= 0 && pivot1.y < WorldSize.y)) {
+        //TODO Make this divide by 4 to Grid/Tile Size.
+        int flatten1 = gp1.y * WorldSize.x + gp1.x;
+        int flatten2 = gp2.y * WorldSize.x + gp2.x;
+
+        if ((gp1.x >= 0 && gp1.x  < WorldSize.x) && (gp1.y >= 0 && gp1.y < WorldSize.y)) {
             if (WorldSpec[flatten1] & FLAG_SOLID) {
                 return false;
             }
         }
-        if ((pivot2.x >= 0 && pivot2.x < WorldSize.x) && (pivot2.y >= 0 && pivot2.y < WorldSize.y)) {
+        if ((gp2.x >= 0 && gp2.x < WorldSize.x) && (gp2.y >= 0 && gp2.y < WorldSize.y)) {
             if (WorldSpec[flatten2] & FLAG_SOLID) {
                 return false;
             }
@@ -73,7 +76,8 @@ private:
 
     Storage<Transform> &transforms;
     Entity target;
-    Vector2 &WorldSize;
+    Vector2 WorldSize;
     uint16_t *WorldSpec;
+    Vector2 TileSize;
     KeyFlags &keys;
 };

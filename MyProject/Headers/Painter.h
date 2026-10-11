@@ -29,11 +29,7 @@ public:
     }
 
     void clearScreen() {
-        for (int vy = 0; vy < VirtualVector.y; vy++) {
-            for (int vx = 0; vx < VirtualVector.x; vx++) {
-                screen[vy * VirtualVector.x + vx] = 0x00;
-            }
-        }
+        std::fill(screen.begin(), screen.end(), 0);
     }
 private:
     Vector2 VirtualVector;

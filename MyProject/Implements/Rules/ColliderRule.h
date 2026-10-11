@@ -1,7 +1,8 @@
 #pragma once
 
+#include "Headers/Interfaces/IRule.h"
+
 #include "Headers/BasicStructures.h"
-#include "../../Headers/Interfaces/IRule.h"
 #include "Headers/Object.h"
 #include "Headers/Storage.h"
 #include "Headers/World.h"

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../Headers/Interfaces/IRender.h"
+#include "Headers/Interfaces/IRender.h"
 #include "Headers/VirtualScreen.h"
 
 class ObjectRender : public IRender {
@@ -9,6 +9,7 @@ public:
     : renderables(renderables), transforms(transforms) {
     }
 
+    //TODO cull by chunk.
     void Render(VirtualScreen &vs) override{
         const std::vector<Entity> &own_renderables = renderables.Owners();
         const std::vector<Renderable> &dense_renderables = renderables.All();
