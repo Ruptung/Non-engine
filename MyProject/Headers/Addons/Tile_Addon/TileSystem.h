@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BasicStructures.h"
+#include "../../BasicStructures.h"
 
 struct TileSet {
     TileSet(Vector2 TileSize, uint8_t *Tiles)

@@ -1,14 +1,14 @@
 #pragma once
 
 #include "Headers/BasicStructures.h"
+#include "TilePainter.h"
 #include "Headers/Interfaces/IRender.h"
 
-
-
-class MapRenderer : public IRender {
+class TileMapRenderer : public IRender {
 public:
-    MapRenderer(const ScreenSet &ScreenSet, const TileSet &TileSet, const WorldSet &WorldSet, Storage<Transform> &transforms, const Entity target)
-    : ScreenVector(ScreenSet.VirtualVector),
+    TileMapRenderer(TilePainter &TilePainter, const ScreenSet &ScreenSet, const TileSet &TileSet, const WorldSet &WorldSet, Storage<Transform> &transforms, const Entity target)
+    : tilePainter(TilePainter),
+    ScreenVector(ScreenSet.VirtualVector),
     TileSize(TileSet.TileSize),
     WorldSize(WorldSet.WorldSize),
     WorldMap(WorldSet.WorldMap),
@@ -19,7 +19,7 @@ public:
     void Render(VirtualScreen &vs) override {
         Vector2 camera = transforms.Get(target).position;
 
-        Vector2 topLeft = camera - ScreenVector / 2;
+        Vector2 topLeft = camera;
         Vector2 bottomRight = topLeft + ScreenVector - Vector2::one();
 
         Vector2 first = topLeft / TileSize;
@@ -30,12 +30,13 @@ public:
                 if (x < 0 || x >= WorldSize.x) continue;
                 if (y < 0 || y >= WorldSize.y) continue;
 
-                vs.DrawTileOnGrid(Vector2(x, y), WorldMap[y*WorldSize.x + x]);
+                tilePainter.DrawTileOnGrid(vs, Vector2(x, y), WorldMap[y*WorldSize.x + x]);
             }
         }
     }
 
 private:
+    TilePainter &tilePainter;
     Vector2 ScreenVector;
     Vector2 TileSize;
 

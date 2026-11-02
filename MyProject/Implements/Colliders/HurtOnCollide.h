@@ -2,7 +2,7 @@
 
 #include <cstdio>
 
-#include "../Headers/Interfaces/ICollide.h"
+#include "../../Headers/Interfaces/ICollide.h"
 
 class HurtOnCollide : public ICollide {
 public:
