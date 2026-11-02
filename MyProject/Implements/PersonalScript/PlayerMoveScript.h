@@ -1,9 +1,11 @@
 #pragma once
 
-#include "Headers/BasicStructures.h"
+#include "Headers/Interfaces/IScript.h"
+#include "Headers/World.h"
 #include "Headers/Interfaces/IRule.h"
 #include "Headers/Storage.h"
 #include "Headers/Object.h"
+#include "../../Headers/Addons/Tile_Addon/TileSystem.h"
 
 #include "Implements/EventListeners/BasicKeyTest.h"
 
@@ -13,27 +15,37 @@ enum WorldFlag : uint16_t {
     // WIP ...
 };
 
-//This is Experiment Rule this will be removed.
-class MoveRule : public IRule {
+class PlayerMoveScript : public IScript {
+private:
+    Storage<Transform> *transforms;
+    Vector2 WorldSize;
+    uint16_t *WorldSpec;
+    Vector2 TileSize;
+    KeyFlags *keys;
 public:
-    MoveRule(Storage<Transform> &transforms, Entity target, KeyFlags &keys, WorldSet WorldSet, TileSet TileSet)
+    PlayerMoveScript(Entity player, Storage<Transform> *transforms, KeyFlags *keys, WorldSet WorldSet, TileSet TileSet)
     : transforms(transforms),
-    target(target),
     WorldSize(WorldSet.WorldSize),
     WorldSpec(WorldSet.WorldSpec),
     TileSize(TileSet.TileSize),
     keys(keys) {
+        thisEntity = player;
+    }
+
+
+    void Start() override {
+
     }
 
     void Update() override {
-        Transform &player = transforms.Get(target);
+        Transform &player = transforms->Get(thisEntity);
 
-        if (!CanMove(player.position, keys.axis, player.scale))
+        if (!CanMove(player.position, keys->axis, player.scale))
             return;
 
-        player.position = player.position + keys.axis;
+
+        player.position = player.position + keys->axis;
     }
-    
 private:
     bool CanMove(Vector2 pos, Vector2 moveto, Vector2 scale) {
         if (scale.x * scale.y == 0) { return true; }
@@ -73,11 +85,4 @@ private:
         }
         return true;
     }
-
-    Storage<Transform> &transforms;
-    Entity target;
-    Vector2 WorldSize;
-    uint16_t *WorldSpec;
-    Vector2 TileSize;
-    KeyFlags &keys;
 };

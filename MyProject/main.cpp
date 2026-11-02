@@ -12,16 +12,16 @@
 #include "Headers/Painter.h"
 #include "Headers/SDL_Wizard.h"
 #include "Headers/Storage.h"
-#include "Headers/TileSystem.h"
+#include "Headers/Addons/Tile_Addon/TileSystem.h"
 #include "Headers/World.h"
 
-#include "Implements/HurtOnCollide.h"
-#include "Implements/PrintOnCollide.h"
+#include "Implements/Colliders/HurtOnCollide.h"
+#include "Implements/Colliders/PrintOnCollide.h"
 
 #include "Implements/EventListeners/BasicKeyTest.h"
-#include "Implements/Renders/MapRenderer.h"
-#include "Implements/Rules/MoveRule.h"
-#include "Implements/Renders/ObjectRender.h"
+#include "Headers/Addons/Tile_Addon/TileMapRenderer.h"
+#include "Implements/PersonalScript/PlayerMoveScript.h"
+#include "Headers/Addons/Tile_Addon/TileObjectRender.h"
 #include "Implements/Rules/ColliderRule.h"
 
 #define SCREEN_WIDTH 512
@@ -46,7 +46,7 @@ int main() {
     uint16_t SampleTile = TILE_ID(2) | TILE_PALETTE(0) | TILE_LAYER(1);
 
     //--------TODO Change this to external Data----------
-    uint8_t tiles[][8][8] = {
+    uint8_t tiles[][4][4] = {
         {
             {0, 0, 0, 0},
             {0, 0, 0, 0},
@@ -54,27 +54,18 @@ int main() {
             {0, 0, 0, 0}
         },
         {
-            {1, 0, 0, 1, 1, 0, 0, 1},
-            {0, 0, 0, 0, 0, 0, 0, 0},
-            {1, 0, 0, 1, 1, 0, 0, 1},
-            {0, 1, 1, 0, 0, 1, 1, 0},
-            {1, 0, 0, 1, 1, 0, 0, 1},
-            {0, 0, 0, 0, 0, 0, 0, 0},
-            {1, 0, 0, 1, 1, 0, 0, 1},
-            {0, 1, 1, 0, 0, 1, 1, 0}
+            {1, 0, 0, 1},
+            {0, 0, 0, 0},
+            {1, 0, 0, 1},
+            {0, 1, 1, 0}
         },
         {
-            {2, 2, 0, 0, 2, 2, 0, 0},
-            {2, 2, 0, 0, 2, 2, 0, 0},
-            {0, 0, 2, 2, 0, 0, 2, 2},
-            {0, 0, 2, 2, 0, 0, 2, 2},
-            {2, 2, 0, 0, 2, 2, 0, 0},
-            {2, 2, 0, 0, 2, 2, 0, 0},
-            {0, 0, 2, 2, 0, 0, 2, 2},
-            {0, 0, 2, 2, 0, 0, 2, 2}
+            {2, 2, 0, 0},
+            {2, 2, 0, 0},
+            {0, 0, 2, 2},
+            {0, 0, 2, 2}
         }
     };
-
     uint16_t WorldMap[5][5] = {
         {0, SampleTile, SampleTile, SampleTile, SampleTile},
         {SampleTile, 0, 0, 0, SampleTile},
@@ -92,7 +83,7 @@ int main() {
     //---------------------------------------------------
 
     TileSet tile_set = {
-        Vector2(8, 8),
+        Vector2(4, 4),
         &tiles[0][0][0]
     };
     WorldSet world_set = {
@@ -111,52 +102,51 @@ int main() {
     std::vector<IEventListener *> listeners;
     std::vector<IRender *> renders;
     std::vector<IRule *> rules;
-    std::vector<IScript *> scripts;
 
     //properties  
     World world;
 
     //entities
     Entity camera = world.CreateEntity();
-    world.AddComponent(camera , Transform(Vector2(3, 3)));
+    world.AddComponent(camera , Transform(Vector2(-1, -1)));
 
     Entity player = world.CreateEntity();
-    world.AddComponent(player, Transform(Vector2(0, 0), Vector2(8, 8)));
+    world.AddComponent(player, Transform(Vector2(0, 0), Vector2(4, 4)));
     world.AddComponent(player, Renderable(TILE_ID(1) | TILE_LAYER(2) | TILE_PALETTE(0) | TILE_Y_IVRT));
     world.AddComponent(player, Collider());
+    world.AddComponent(player, PlayerMoveScript(player, &world.GetStorage<Transform>(), &keys, world_set, tile_set));
+
 
     Entity Dummy = world.CreateEntity();
     world.AddComponent(Dummy, Transform(Vector2(3, 3), Vector2(4, 4)));
     world.AddComponent(Dummy, Renderable(TILE_ID(1) | TILE_LAYER(2) | TILE_PALETTE(0)));
     world.AddComponent(Dummy, Collider());
 
-    world.AddComponent(player, PrintOnCollide());
-    world.AddComponent(Dummy, HurtOnCollide());
+    //world.AddComponent(player, PrintOnCollide());
+    //world.AddComponent(Dummy, HurtOnCollide());
+
+    TilePainter tile_painter(tile_set, world.GetComponent<Transform>(camera));
 
     //Interface
     BasicKeyTest basic_key_test = BasicKeyTest(keys);
-
-    MoveRule my_rule = MoveRule(world.GetStorage<Transform>(), player, keys, world_set, tile_set);
     ColliderRule collider_rule = ColliderRule(world.GetStorage<Collider>(), world.GetStorage<Transform>(), world);
 
-    ObjectRender object_render = ObjectRender(world.GetStorage<Renderable>(), world.GetStorage<Transform>());
-    MapRenderer map_renderer = MapRenderer(screen_set, tile_set, world_set, world.GetStorage<Transform>(), player);
-
+    TileObjectRender object_render = TileObjectRender(tile_painter, world.GetStorage<Renderable>(), world.GetStorage<Transform>());
+    TileMapRenderer map_renderer = TileMapRenderer(tile_painter, screen_set, tile_set, world_set, world.GetStorage<Transform>(), camera);
 
     //Push Interface
     listeners.push_back(&basic_key_test);
 
-    rules.push_back(&my_rule);
     rules.push_back(&collider_rule);
 
     renders.push_back(&object_render);
     renders.push_back(&map_renderer);
 
-    VirtualScreen virtual_screen(screen_set, tile_set, world.GetComponent<Transform>(player));
+    VirtualScreen virtual_screen(screen_set);
 
-
-    for (IScript *script: scripts)
-        script->Start();
+    for (auto &view : world.Implementers<IScript>())
+        for (size_t i = 0; i < view->Size(); i++)
+            view->At(i).Start();
 
     // //loop
     while (running) {
@@ -175,8 +165,9 @@ int main() {
         for (IRender *render: renders)
             render->Render(virtual_screen);
 
-        for (IScript *script: scripts)
-            script->Update();
+        for (auto &view : world.Implementers<IScript>())
+            for (size_t i = 0; i < view->Size(); i++)
+                view->At(i).Update();
 
         wiz.OverwriteBuffer(painter.GetScreen(virtual_screen.GetScreen()));
         SDL_Delay(41); //16ms = 60fps, 41ms = 24fps

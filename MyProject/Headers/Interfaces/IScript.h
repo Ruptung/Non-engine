@@ -1,8 +1,6 @@
 #pragma once
 
-#include <cstdint>
-
-#include "../BasicStructures.h"
+#include "Headers/Storage.h"
 
 class IScript {
 public:
@@ -11,6 +9,6 @@ public:
     virtual void Start() = 0;
 
     virtual void Update() = 0;
-private:
-    Entity thisEntity;
+protected:
+    Entity thisEntity = 0;
 };
