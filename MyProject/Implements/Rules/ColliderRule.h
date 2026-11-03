@@ -1,7 +1,8 @@
 #pragma once
 
+#include "Headers/Interfaces/IRule.h"
+
 #include "Headers/BasicStructures.h"
-#include "../../Headers/Interfaces/IRule.h"
 #include "Headers/Object.h"
 #include "Headers/Storage.h"
 #include "Headers/World.h"
@@ -25,8 +26,8 @@ public:
 
                 if (CheckBoxCollide(transforms.Get(object), transforms.Get(target))) {
 
-                    std::vector<ICollide*> a = world.GetCollides(object);
-                    std::vector<ICollide*> b = world.GetCollides(target);
+                    std::vector<ICollide*> a = world.FindAll<ICollide>(object);
+                    std::vector<ICollide*> b = world.FindAll<ICollide>(target);
 
                     for (ICollide * collide: a) {
                         collide->Collide(target);

@@ -21,18 +21,24 @@ struct Transform {
     Vector2 position;
     Vector2 scale;
 };
-struct Physic {
-    Physic() : Velocity(Vector2::zero()), Acceleration(Vector2::zero()) {}
+
+struct Physics {
+    Physics() : Velocity(Vector2::zero()), Acceleration(Vector2::zero()) {}
 
     Vector2 Velocity;
     Vector2 Acceleration;
 };
+
 struct Renderable {
     Renderable(uint16_t tileData) : tileData(tileData) {}
 
     uint16_t tileData;
 };
+
 struct Collider {
     // isTrigger(it Stops?) 1, WIP...
     uint8_t collideData;
+};
+
+struct Zombie {
 };

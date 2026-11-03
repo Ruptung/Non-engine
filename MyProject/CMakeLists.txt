@@ -17,17 +17,21 @@ add_executable(MyProject main.cpp
         Headers/SDL_Wizard.h
         Headers/VirtualScreen.h
         Implements/EventListeners/BasicKeyTest.h
-        Implements/Renders/MapRenderer.h
-        Implements/Renders/ObjectRender.h
-        Implements/Rules/MoveRule.h
+        Headers/Addons/Tile_Addon/TileMapRenderer.h
+        Headers/Addons/Tile_Addon/TileObjectRender.h
         Headers/Storage.h
         Headers/World.h
         Implements/Rules/ColliderRule.h
-        Implements/PersonalScript/PersonalScriptTest.h
+        Implements/PersonalScript/PlayerMoveScript.h
         Headers/Interfaces/IScript.h
         Headers/Interfaces/ICollide.h
-        Implements/PrintOnCollide.h
-        Implements/HurtOnCollide.h
+        Implements/Colliders/PrintOnCollide.h
+        Implements/Colliders/HurtOnCollide.h
+        Headers/Addons/Tile_Addon/TileSystem.h
+        Headers/Addons/Tile_Addon/TilePainter.h
+        Headers/InterfaceView.h
+        Implements/PersonalScript/HordeBehavior.h
+        Implements/Rules/PhysicsRule.h
 )
 
 target_include_directories(MyProject PRIVATE
