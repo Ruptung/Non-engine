@@ -22,7 +22,9 @@
 #include "Headers/Addons/Tile_Addon/TileMapRenderer.h"
 #include "Implements/PersonalScript/PlayerMoveScript.h"
 #include "Headers/Addons/Tile_Addon/TileObjectRender.h"
+#include "Implements/PersonalScript/HordeBehavior.h"
 #include "Implements/Rules/ColliderRule.h"
+#include "Implements/Rules/PhysicsRule.h"
 
 #define SCREEN_WIDTH 512
 #define SCREEN_HEIGHT 512
@@ -40,7 +42,8 @@ int main() {
 
     //datas
     uint32_t colors[][8] = {
-        0x00000000, 0xFFFFFFFF, 0xFF777777, 0xFF0000FF
+        {0x00000000, 0xFFFFFFFF, 0xFF777777, 0xFF0000FF,},
+        {0x00000000, 0xFF00FF00}
     };
 
     uint16_t SampleTile = TILE_ID(2) | TILE_PALETTE(0) | TILE_LAYER(1);
@@ -114,30 +117,39 @@ int main() {
     world.AddComponent(player, Transform(Vector2(0, 0), Vector2(4, 4)));
     world.AddComponent(player, Renderable(TILE_ID(1) | TILE_LAYER(2) | TILE_PALETTE(0) | TILE_Y_IVRT));
     world.AddComponent(player, Collider());
-    world.AddComponent(player, PlayerMoveScript(player, &world.GetStorage<Transform>(), &keys, world_set, tile_set));
+    world.AddComponent(player, Physics());
+    world.AddComponent(player, PlayerMoveScript(player, &world.GetStorage<Transform>(), &world.GetStorage<Physics>(), &keys, world_set, tile_set));
 
+    Entity z1_test = world.CreateEntity();
+    world.AddComponent(z1_test, Transform(Vector2(5, 5), Vector2(4, 4)));
+    world.AddComponent(z1_test, Renderable(TILE_ID(1) | TILE_LAYER(2) | TILE_PALETTE(1)));
+    world.AddComponent(z1_test, Zombie());
+    world.AddComponent(z1_test, Collider());
+    world.AddComponent(z1_test, Physics());
 
-    Entity Dummy = world.CreateEntity();
-    world.AddComponent(Dummy, Transform(Vector2(3, 3), Vector2(4, 4)));
-    world.AddComponent(Dummy, Renderable(TILE_ID(1) | TILE_LAYER(2) | TILE_PALETTE(0)));
-    world.AddComponent(Dummy, Collider());
+    Entity Manager = world.CreateEntity();
+    world.AddComponent(Manager, HordeBehavior(player, &world.GetStorage<Transform>(), &world.GetStorage<Physics>(), &world.GetStorage<Zombie>()));
 
-    //world.AddComponent(player, PrintOnCollide());
-    //world.AddComponent(Dummy, HurtOnCollide());
+    world.AddComponent(player, HurtOnCollide(&world.GetStorage<Zombie>()));
 
     TilePainter tile_painter(tile_set, world.GetComponent<Transform>(camera));
 
     //Interface
     BasicKeyTest basic_key_test = BasicKeyTest(keys);
+
     ColliderRule collider_rule = ColliderRule(world.GetStorage<Collider>(), world.GetStorage<Transform>(), world);
+    PhysicsRule physics_rule = PhysicsRule(world.GetStorage<Physics>(), world.GetStorage<Transform>(), world_set, tile_set);
 
     TileObjectRender object_render = TileObjectRender(tile_painter, world.GetStorage<Renderable>(), world.GetStorage<Transform>());
     TileMapRenderer map_renderer = TileMapRenderer(tile_painter, screen_set, tile_set, world_set, world.GetStorage<Transform>(), camera);
+
+
 
     //Push Interface
     listeners.push_back(&basic_key_test);
 
     rules.push_back(&collider_rule);
+    rules.push_back(&physics_rule);
 
     renders.push_back(&object_render);
     renders.push_back(&map_renderer);
