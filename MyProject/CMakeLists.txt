@@ -30,6 +30,8 @@ add_executable(MyProject main.cpp
         Headers/Addons/Tile_Addon/TileSystem.h
         Headers/Addons/Tile_Addon/TilePainter.h
         Headers/InterfaceView.h
+        Implements/PersonalScript/HordeBehavior.h
+        Implements/Rules/PhysicsRule.h
 )
 
 target_include_directories(MyProject PRIVATE
