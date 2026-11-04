@@ -173,13 +173,15 @@ int main() {
         for (IRule *rule: rules)
             rule->Update();
 
-        virtual_screen.Clear();
-        for (IRender *render: renders)
-            render->Render(virtual_screen);
 
         for (auto &view : world.Implementers<IScript>())
             for (size_t i = 0; i < view->Size(); i++)
                 view->At(i).Update();
+
+        virtual_screen.Clear();
+        for (IRender *render: renders)
+            render->Render(virtual_screen);
+
 
         wiz.OverwriteBuffer(painter.GetScreen(virtual_screen.GetScreen()));
         SDL_Delay(41); //16ms = 60fps, 41ms = 24fps
