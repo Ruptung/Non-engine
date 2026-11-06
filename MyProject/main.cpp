@@ -137,8 +137,8 @@ int main() {
     //Interface
     BasicKeyTest basic_key_test = BasicKeyTest(keys);
 
-    ColliderRule collider_rule = ColliderRule(world.GetStorage<Collider>(), world.GetStorage<Transform>(), world);
     PhysicsRule physics_rule = PhysicsRule(world.GetStorage<Physics>(), world.GetStorage<Transform>(), world_set, tile_set);
+    ColliderRule collider_rule = ColliderRule(world.GetStorage<Collider>(), world.GetStorage<Transform>(), world);
 
     TileObjectRender object_render = TileObjectRender(tile_painter, world.GetStorage<Renderable>(), world.GetStorage<Transform>());
     TileMapRenderer map_renderer = TileMapRenderer(tile_painter, screen_set, tile_set, world_set, world.GetStorage<Transform>(), camera);
@@ -148,8 +148,8 @@ int main() {
     //Push Interface
     listeners.push_back(&basic_key_test);
 
-    rules.push_back(&collider_rule);
     rules.push_back(&physics_rule);
+    rules.push_back(&collider_rule);
 
     renders.push_back(&object_render);
     renders.push_back(&map_renderer);
@@ -170,13 +170,13 @@ int main() {
                 running = false;
         }
 
-        for (IRule *rule: rules)
-            rule->Update();
-
-
         for (auto &view : world.Implementers<IScript>())
             for (size_t i = 0; i < view->Size(); i++)
                 view->At(i).Update();
+
+
+        for (IRule *rule: rules)
+            rule->Update();
 
         virtual_screen.Clear();
         for (IRender *render: renders)

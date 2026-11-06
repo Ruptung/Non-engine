@@ -51,11 +51,15 @@ private:
         int iter = (moveto.x == 0) ? abs(moveto.y) : (moveto.y == 0) ? abs(moveto.x) : std::min(abs(moveto.x), abs(moveto.y)); // min
         Vector2 ratio_move = moveto / iter;
 
+        bool fx = false;
+        bool fy = false;
         for (int i = 0; i < iter; i++) {
-            if (!CanMove(pos, ratio_move, scale)) { break; }
-
-            pos += ratio_move;
+            if (fx == false && CanMove(pos, Vector2(ratio_move.x, 0), scale)) { pos.x += ratio_move.x; }
+            else { fx = true; }
+            if (fy == false && CanMove(pos, Vector2(0, ratio_move.y), scale)) { pos.y += ratio_move.y; }
+            else { fy = true; }
         }
+
         return pos;
     }
     bool CanMove(Vector2 pos, Vector2 moveto, Vector2 scale) {
@@ -77,7 +81,6 @@ private:
         Vector2 gp1 = pivot1 / TileSize;
         Vector2 gp2 = pivot2 / TileSize;
 
-        //TODO Make this divide by 4 to Grid/Tile Size.
         int flatten1 = gp1.y * WorldSize.x + gp1.x;
         int flatten2 = gp2.y * WorldSize.x + gp2.x;
 
