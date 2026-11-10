@@ -19,13 +19,13 @@
 
 class TilePainter {
 public:
-    TilePainter(const TileSet &TileSet, Transform &target)
+    TilePainter(const TileSet &TileSet, Transform *target)
     : target(target),
     TileSize(TileSet.TileSize),
     Tiles(TileSet.Tiles){}
 
     void DrawTileOnWorld(VirtualScreen &VirtualScreen, Vector2 wv, uint16_t tileData) {
-        Vector2 lookVector = wv - target.position;
+        Vector2 lookVector = wv - target->position;
 
         if (!VirtualScreen.CheckCamBoundery(lookVector, TileSize)) return;
 
@@ -60,7 +60,7 @@ public:
 
 
 private:
-    Transform &target;
+    Transform *target;
 
     Vector2 TileSize;
     uint8_t *Tiles;

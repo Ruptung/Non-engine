@@ -24,7 +24,7 @@ public:
                 Entity object = owner_collider[object_idx];
                 Entity target = owner_collider[target_idx];
 
-                if (CheckBoxCollide(transforms.Get(object), transforms.Get(target))) {
+                if (CheckBoxCollide(*transforms.Get(object), *transforms.Get(target))) {
 
                     std::vector<ICollide*> a = world.FindAll<ICollide>(object);
                     std::vector<ICollide*> b = world.FindAll<ICollide>(target);

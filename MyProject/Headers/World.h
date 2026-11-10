@@ -20,34 +20,50 @@ public:
     }
 
     Entity CreateEntity() {
-        return entityCounter++;
-    }
-
-    template<typename T>
-    void AddComponent(Entity e, T t) {
-        assert(CheckDependency<T>(e));
-
-        GetStorage<T>().Add(e, t);
-    }
-
-    template<typename T>
-    T &GetComponent(Entity e) {
-        Storage<T> &s = GetStorage<T>();
-        assert(s.Has(e));
-
-        return s.Get(e);
+        //reuse array
+        if (!entity_freed.empty()) {
+            uint16_t id = entity_freed.back();
+            entity_freed.pop_back();
+            return Entity{id, entity_generation[id]};
+        }
+        //extend array
+        else {
+            entity_generation.push_back(0);
+            return Entity{entityCounter, entity_generation[entityCounter++]};
+        }
     }
 
     void DestroyEntity(Entity e) {
+        if (!checkGeneration(e)) { return; }
+
+        entity_generation[e.id]++;
         for (auto& [key, storage] : TypeStorage) {
             if (storage->Has(e)) {
                 storage->Remove(e);
             }
         }
+        entity_freed.push_back(e.id);
     }
 
     template<typename T>
-    Storage<T> &GetStorage() {
+    void AddComponent(Entity e, T t) {
+        if (!checkGeneration(e)) { return; }
+
+        assert(CheckDependency<T>(e));
+
+        GetStorage<T>()->Add(e, t);
+    }
+
+    template<typename T>
+    T *GetComponent(Entity e) {
+        if (!checkGeneration(e)) { return nullptr; }   // 죽은 ID
+
+        Storage<T> *s = GetStorage<T>();
+        return s->Has(e) ? s->Get(e) : nullptr;
+    }
+
+    template<typename T>
+    Storage<T> *GetStorage() {
         auto i = get_iter<T>();
 
         if (i == TypeStorage.end()) {
@@ -61,7 +77,7 @@ public:
             Register<ICollide>(ref);
         }
 
-        return *static_cast<Storage<T>*>(i->second.get());
+        return static_cast<Storage<T>*>(i->second.get());
     }
 
     // 인터페이스 I 를 구현한 저장소들의 명단
@@ -84,6 +100,10 @@ public:
     }
 
 private:
+    bool checkGeneration(Entity e) {
+        return (e.id < entity_generation.size() && e.gen == entity_generation[e.id]);
+    }
+
     template<typename I, typename T>
     void Register(Storage<T> &storage) {
         if constexpr (std::is_base_of_v<I, T>) {
@@ -122,7 +142,10 @@ private:
         return true;
     }
 
-    Entity entityCounter;
+    uint16_t entityCounter;
+
+    std::vector<uint16_t> entity_freed;
+    std::vector<uint8_t> entity_generation;
 
     std::unordered_map<std::type_index, std::unique_ptr<IStorage>> TypeStorage;
 

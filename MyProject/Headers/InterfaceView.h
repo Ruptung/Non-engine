@@ -25,7 +25,7 @@ public:
     size_t Size() const override { return storage.Owners().size(); }
     I &At(size_t i) override { return storage.All()[i]; }      // T& -> I& 업캐스트
     Entity OwnerAt(size_t i) const override { return storage.Owners()[i]; }
-    I *Find(Entity e) override { return storage.Has(e) ? &storage.Get(e) : nullptr; }
+    I *Find(Entity e) override { return storage.Has(e) ? storage.Get(e) : nullptr; }
 
 private:
     Storage<T> &storage;

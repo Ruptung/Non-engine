@@ -10,5 +10,5 @@ public:
 
     virtual void Update() = 0;
 protected:
-    Entity thisEntity = 0;
+    Entity thisEntity = NO_ENTITY;
 };

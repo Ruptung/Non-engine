@@ -30,13 +30,13 @@ public:
         auto &zombie_dense = zombies->All();
         auto &zombie_owner = zombies->Owners();
 
-        Vector2 p_pos = transforms->Get(target).position;
+        Vector2 p_pos = transforms->Get(target)->position;
 
         for (size_t i = 0; i < zombie_dense.size(); i++) {
 
-            const Vector2 *z_pos = &transforms->Get(zombie_owner[i]).position;
+            const Vector2 *z_pos = &transforms->Get(zombie_owner[i])->position;
 
-            physics->Get(zombie_owner[i]).Velocity = Vector2(
+            physics->Get(zombie_owner[i])->Velocity = Vector2(
                 (p_pos.x < z_pos->x) ? -1 : (p_pos.x > z_pos->x) ? 1 : 0,
                 (p_pos.y < z_pos->y) ? -1 : (p_pos.y > z_pos->y) ? 1 : 0
                 );

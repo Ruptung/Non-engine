@@ -17,7 +17,7 @@ public:
     }
 
     void Render(VirtualScreen &vs) override {
-        Vector2 camera = transforms.Get(target).position;
+        Vector2 camera = transforms.Get(target)->position;
 
         Vector2 topLeft = camera;
         Vector2 bottomRight = topLeft + ScreenVector - Vector2::one();

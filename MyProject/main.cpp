@@ -16,7 +16,6 @@
 #include "Headers/World.h"
 
 #include "Implements/Colliders/HurtOnCollide.h"
-#include "Implements/Colliders/PrintOnCollide.h"
 
 #include "Implements/EventListeners/BasicKeyTest.h"
 #include "Headers/Addons/Tile_Addon/TileMapRenderer.h"
@@ -118,7 +117,7 @@ int main() {
     world.AddComponent(player, Renderable(TILE_ID(1) | TILE_LAYER(2) | TILE_PALETTE(0) | TILE_Y_IVRT));
     world.AddComponent(player, Collider());
     world.AddComponent(player, Physics());
-    world.AddComponent(player, PlayerMoveScript(player, &world.GetStorage<Transform>(), &world.GetStorage<Physics>(), &keys, world_set, tile_set));
+    world.AddComponent(player, PlayerMoveScript(player, world.GetStorage<Transform>(), world.GetStorage<Physics>(), &keys, world_set, tile_set));
 
     Entity z1_test = world.CreateEntity();
     world.AddComponent(z1_test, Transform(Vector2(5, 5), Vector2(4, 4)));
@@ -128,22 +127,20 @@ int main() {
     world.AddComponent(z1_test, Physics());
 
     Entity Manager = world.CreateEntity();
-    world.AddComponent(Manager, HordeBehavior(player, &world.GetStorage<Transform>(), &world.GetStorage<Physics>(), &world.GetStorage<Zombie>()));
+    world.AddComponent(Manager, HordeBehavior(player, world.GetStorage<Transform>(), world.GetStorage<Physics>(), world.GetStorage<Zombie>()));
 
-    world.AddComponent(player, HurtOnCollide(&world.GetStorage<Zombie>()));
+    world.AddComponent(player, HurtOnCollide(world.GetStorage<Zombie>()));
 
     TilePainter tile_painter(tile_set, world.GetComponent<Transform>(camera));
 
     //Interface
     BasicKeyTest basic_key_test = BasicKeyTest(keys);
 
-    PhysicsRule physics_rule = PhysicsRule(world.GetStorage<Physics>(), world.GetStorage<Transform>(), world_set, tile_set);
-    ColliderRule collider_rule = ColliderRule(world.GetStorage<Collider>(), world.GetStorage<Transform>(), world);
+    PhysicsRule physics_rule = PhysicsRule(*world.GetStorage<Physics>(), *world.GetStorage<Transform>(), world_set, tile_set);
+    ColliderRule collider_rule = ColliderRule(*world.GetStorage<Collider>(), *world.GetStorage<Transform>(), world);
 
-    TileObjectRender object_render = TileObjectRender(tile_painter, world.GetStorage<Renderable>(), world.GetStorage<Transform>());
-    TileMapRenderer map_renderer = TileMapRenderer(tile_painter, screen_set, tile_set, world_set, world.GetStorage<Transform>(), camera);
-
-
+    TileObjectRender object_render = TileObjectRender(tile_painter, *world.GetStorage<Renderable>(), *world.GetStorage<Transform>());
+    TileMapRenderer map_renderer = TileMapRenderer(tile_painter, screen_set, tile_set, world_set, *world.GetStorage<Transform>(), camera);
 
     //Push Interface
     listeners.push_back(&basic_key_test);

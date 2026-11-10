@@ -36,20 +36,20 @@ public:
 
             if (velocity.x == 0 && velocity.y == 0) { continue; }
 
-            Transform &transform = transforms.Get(owner[i]);
+            Transform &transform = *transforms.Get(owner[i]);
 
-            transform.position = MoveTo(transform.position, velocity, transform.scale);
+            transform.position = AppendVelocity(transform.position, velocity, transform.scale);
 
             dense[i].Velocity = Vector2::zero();
         }
     }
 private:
-    Vector2 MoveTo(Vector2 pos, Vector2 moveto, Vector2 scale) {
-        if (scale.x == 0 || scale.y == 0) { return pos + moveto; }
+    Vector2 AppendVelocity(Vector2 pos, Vector2 velocity, Vector2 scale) {
+        if (scale.x == 0 || scale.y == 0) { return pos + velocity; }
         else { scale = scale - Vector2::one(); }
 
-        int iter = (moveto.x == 0) ? abs(moveto.y) : (moveto.y == 0) ? abs(moveto.x) : std::min(abs(moveto.x), abs(moveto.y)); // min
-        Vector2 ratio_move = moveto / iter;
+        int iter = (velocity.x == 0) ? abs(velocity.y) : (velocity.y == 0) ? abs(velocity.x) : std::min(abs(velocity.x), abs(velocity.y)); // min
+        Vector2 ratio_move = velocity / iter;
 
         bool fx = false;
         bool fy = false;

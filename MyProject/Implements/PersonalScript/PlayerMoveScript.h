@@ -41,7 +41,7 @@ public:
     }
 
     void Update() override {
-        physics->Get(thisEntity).Velocity = keys->axis;
+        physics->Get(thisEntity)->Velocity = keys->axis;
     }
 private:
 };
