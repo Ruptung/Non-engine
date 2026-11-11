@@ -10,9 +10,9 @@ class PhysicsRule : public IRule {
 private:
     Storage<Physics> &physics;
     Storage<Transform> &transforms;
-    Vector2 WorldSize;
+    Vector2Int WorldSize;
     uint16_t *WorldSpec;
-    Vector2 TileSize;
+    Vector2Int TileSize;
 
 public:
     PhysicsRule(Storage<Physics> &physics, Storage<Transform> &transforms, const WorldSet &WorldSet, const TileSet TileSet)
@@ -32,7 +32,7 @@ public:
 
 
         for (size_t i = 0; i < dense.size(); i++) {
-            const Vector2 &velocity = dense[i].Velocity;
+            const Vector2Int &velocity = dense[i].Velocity;
 
             if (velocity.x == 0 && velocity.y == 0) { continue; }
 
@@ -40,31 +40,31 @@ public:
 
             transform.position = AppendVelocity(transform.position, velocity, transform.scale);
 
-            dense[i].Velocity = Vector2::zero();
+            dense[i].Velocity = Vector2Int::zero();
         }
     }
 private:
-    Vector2 AppendVelocity(Vector2 pos, Vector2 velocity, Vector2 scale) {
+    Vector2Int AppendVelocity(Vector2Int pos, Vector2Int velocity, Vector2Int scale) {
         if (scale.x == 0 || scale.y == 0) { return pos + velocity; }
-        else { scale = scale - Vector2::one(); }
+        else { scale = scale - Vector2Int::one(); }
 
         int iter = (velocity.x == 0) ? abs(velocity.y) : (velocity.y == 0) ? abs(velocity.x) : std::min(abs(velocity.x), abs(velocity.y)); // min
-        Vector2 ratio_move = velocity / iter;
+        Vector2Int ratio_move = velocity / iter;
 
         bool fx = false;
         bool fy = false;
         for (int i = 0; i < iter; i++) {
-            if (fx == false && CanMove(pos, Vector2(ratio_move.x, 0), scale)) { pos.x += ratio_move.x; }
+            if (fx == false && CanMove(pos, Vector2Int(ratio_move.x, 0), scale)) { pos.x += ratio_move.x; }
             else { fx = true; }
-            if (fy == false && CanMove(pos, Vector2(0, ratio_move.y), scale)) { pos.y += ratio_move.y; }
+            if (fy == false && CanMove(pos, Vector2Int(0, ratio_move.y), scale)) { pos.y += ratio_move.y; }
             else { fy = true; }
         }
 
         return pos;
     }
-    bool CanMove(Vector2 pos, Vector2 moveto, Vector2 scale) {
-        Vector2 pivot1 = pos + moveto;
-        Vector2 pivot2 = pivot1 + scale;
+    bool CanMove(Vector2Int pos, Vector2Int moveto, Vector2Int scale) {
+        Vector2Int pivot1 = pos + moveto;
+        Vector2Int pivot2 = pivot1 + scale;
 
         if (moveto.x > 0) {
             pivot1.x += scale.x;
@@ -78,8 +78,8 @@ private:
             pivot2.y -= scale.y;
         }
 
-        Vector2 gp1 = pivot1 / TileSize;
-        Vector2 gp2 = pivot2 / TileSize;
+        Vector2Int gp1 = pivot1 / TileSize;
+        Vector2Int gp2 = pivot2 / TileSize;
 
         int flatten1 = gp1.y * WorldSize.x + gp1.x;
         int flatten2 = gp2.y * WorldSize.x + gp2.x;

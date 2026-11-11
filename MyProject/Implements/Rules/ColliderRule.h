@@ -41,11 +41,11 @@ public:
     }
 private:
     bool CheckBoxCollide(Transform object, Transform target) {
-        Vector2 object_pos = object.position;
-        Vector2 target_pos = target.position;
+        Vector2Int object_pos = object.position;
+        Vector2Int target_pos = target.position;
 
-        Vector2 object_scale = object.scale - Vector2::one();
-        Vector2 target_scale = target.scale - Vector2::one();
+        Vector2Int object_scale = object.scale - Vector2Int::one();
+        Vector2Int target_scale = target.scale - Vector2Int::one();
 
         if (object_pos.x + object_scale.x < target_pos.x || object_pos.x > target_pos.x + target_scale.x) { return false; }
         if (object_pos.y + object_scale.y < target_pos.y || object_pos.y > target_pos.y + target_scale.y) { return false; }

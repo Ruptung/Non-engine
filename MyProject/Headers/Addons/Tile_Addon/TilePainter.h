@@ -24,8 +24,8 @@ public:
     TileSize(TileSet.TileSize),
     Tiles(TileSet.Tiles){}
 
-    void DrawTileOnWorld(VirtualScreen &VirtualScreen, Vector2 wv, uint16_t tileData) {
-        Vector2 lookVector = wv - target->position;
+    void DrawTileOnWorld(VirtualScreen &VirtualScreen, Vector2Int wv, uint16_t tileData) {
+        Vector2Int lookVector = wv - target->position;
 
         if (!VirtualScreen.CheckCamBoundery(lookVector, TileSize)) return;
 
@@ -37,7 +37,7 @@ public:
                 int tilePalette =   (tileData >> 4) & 0x07;
                 int tileLayer =     (tileData >> 2) & 0x03;
 
-                Vector2 pxVector = Vector2(x, y);
+                Vector2Int pxVector = Vector2Int(x, y);
 
                 if (tileData & 0x02)
                     pxVector.x = (TileSize.x-1) - pxVector.x;
@@ -52,8 +52,8 @@ public:
         }
     }
 
-    void DrawTileOnGrid(VirtualScreen &VirtualScreen, Vector2 gv, uint16_t tileData) {
-        Vector2 wv = gv.Scale(TileSize);
+    void DrawTileOnGrid(VirtualScreen &VirtualScreen, Vector2Int gv, uint16_t tileData) {
+        Vector2Int wv = gv.Scale(TileSize);
 
         DrawTileOnWorld(VirtualScreen, wv, tileData);
     }
@@ -62,6 +62,6 @@ public:
 private:
     Transform *target;
 
-    Vector2 TileSize;
+    Vector2Int TileSize;
     uint8_t *Tiles;
 };

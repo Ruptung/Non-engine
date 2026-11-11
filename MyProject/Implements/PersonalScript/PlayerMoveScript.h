@@ -19,9 +19,9 @@ class PlayerMoveScript : public IScript {
 private:
     Storage<Transform> *transforms;
     Storage<Physics> *physics;
-    Vector2 WorldSize;
+    Vector2Int WorldSize;
     uint16_t *WorldSpec;
-    Vector2 TileSize;
+    Vector2Int TileSize;
     KeyFlags *keys;
 public:
     PlayerMoveScript(Entity player, Storage<Transform> *transforms, Storage<Physics> *physics, KeyFlags *keys, const WorldSet &WorldSet, const TileSet TileSet)

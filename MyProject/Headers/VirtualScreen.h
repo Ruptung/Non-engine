@@ -29,7 +29,7 @@ public:
         enableAlpha = true;
     }
 
-    void DrawPixel(Vector2 wv, uint8_t pixelData) {
+    void DrawPixel(Vector2Int wv, uint8_t pixelData) {
         uint8_t typeMask = 0b00000011;
         int pos = wv.y * VirtualVector.x + wv.x;
 
@@ -47,7 +47,7 @@ public:
         ScreenBuffer[pos] = pixelData;
     }
 
-    bool CheckCamBoundery(Vector2 wLookVector, Vector2 size) {
+    bool CheckCamBoundery(Vector2Int wLookVector, Vector2Int size) {
 
         if (wLookVector.x + size.x <= 0 || wLookVector.x >= VirtualVector.x) return false;
         if (wLookVector.y + size.y <= 0 || wLookVector.y >= VirtualVector.y) return false;
@@ -57,8 +57,8 @@ public:
 private:
     bool enableAlpha = false;
 
-    Vector2 VirtualVector;
-    Vector2 HalfVirtualVector;
+    Vector2Int VirtualVector;
+    Vector2Int HalfVirtualVector;
     //TILE:
     //ID 8, palette 3, layer 2, x-ivrt 1, y-ivrt 1
     //PIXEL:

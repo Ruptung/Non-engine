@@ -9,9 +9,9 @@
 struct KeyFlags {
 public:
     KeyFlags() 
-    : axis(Vector2::zero()) {}
+    : axis(Vector2Int::zero()) {}
 
-    Vector2 axis;
+    Vector2Int axis;
 
     //TODO Compress booleans
 

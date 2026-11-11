@@ -7,7 +7,7 @@
 
 class Painter {
 public:
-    Painter(Vector2 VirtualVector, uint32_t *Palette)
+    Painter(Vector2Int VirtualVector, uint32_t *Palette)
     : VirtualVector(VirtualVector),
     palette(Palette),
     screen(VirtualVector.y * VirtualVector.x, 0)
@@ -32,7 +32,7 @@ public:
         std::fill(screen.begin(), screen.end(), 0);
     }
 private:
-    Vector2 VirtualVector;
+    Vector2Int VirtualVector;
     uint32_t *palette;
     std::vector<uint32_t> screen;
 };

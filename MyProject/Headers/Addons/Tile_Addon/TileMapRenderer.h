@@ -17,30 +17,30 @@ public:
     }
 
     void Render(VirtualScreen &vs) override {
-        Vector2 camera = transforms.Get(target)->position;
+        Vector2Int camera = transforms.Get(target)->position;
 
-        Vector2 topLeft = camera;
-        Vector2 bottomRight = topLeft + ScreenVector - Vector2::one();
+        Vector2Int topLeft = camera;
+        Vector2Int bottomRight = topLeft + ScreenVector - Vector2Int::one();
 
-        Vector2 first = topLeft / TileSize;
-        Vector2 last = bottomRight / TileSize;
+        Vector2Int first = topLeft / TileSize;
+        Vector2Int last = bottomRight / TileSize;
 
         for (int y = first.y; y <= last.y; y++) {
             for (int x = first.x; x <= last.x; x++) {
                 if (x < 0 || x >= WorldSize.x) continue;
                 if (y < 0 || y >= WorldSize.y) continue;
 
-                tilePainter.DrawTileOnGrid(vs, Vector2(x, y), WorldMap[y*WorldSize.x + x]);
+                tilePainter.DrawTileOnGrid(vs, Vector2Int(x, y), WorldMap[y*WorldSize.x + x]);
             }
         }
     }
 
 private:
     TilePainter &tilePainter;
-    Vector2 ScreenVector;
-    Vector2 TileSize;
+    Vector2Int ScreenVector;
+    Vector2Int TileSize;
 
-    Vector2 WorldSize;
+    Vector2Int WorldSize;
     uint16_t *WorldMap;
     Storage<Transform> &transforms;
     const Entity target;
