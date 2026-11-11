@@ -34,15 +34,15 @@ public:
     }
 
     void DestroyEntity(Entity e) {
-        if (!checkGeneration(e)) { return; }
+        entity_to_delete.push_back(e);
+    }
+    void FlushDestroyed() {
+        while (!entity_to_delete.empty()) {
+            auto e = entity_to_delete.back();
+            entity_to_delete.pop_back();
 
-        entity_generation[e.id]++;
-        for (auto& [key, storage] : TypeStorage) {
-            if (storage->Has(e)) {
-                storage->Remove(e);
-            }
+            ImmDestroyEntity(e);
         }
-        entity_freed.push_back(e.id);
     }
 
     template<typename T>
@@ -100,6 +100,18 @@ public:
     }
 
 private:
+    void ImmDestroyEntity(Entity e) {
+        if (!checkGeneration(e)) { return; }
+
+        entity_generation[e.id]++;
+        for (auto& [key, storage] : TypeStorage) {
+            if (storage->Has(e)) {
+                storage->Remove(e);
+            }
+        }
+        entity_freed.push_back(e.id);
+    }
+
     bool checkGeneration(Entity e) {
         return (e.id < entity_generation.size() && e.gen == entity_generation[e.id]);
     }
@@ -141,6 +153,7 @@ private:
 
         return true;
     }
+    std::vector<Entity> entity_to_delete;
 
     uint16_t entityCounter;
 

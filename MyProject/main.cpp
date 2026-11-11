@@ -85,11 +85,11 @@ int main() {
     //---------------------------------------------------
 
     TileSet tile_set = {
-        Vector2(4, 4),
+        Vector2Int(4, 4),
         &tiles[0][0][0]
     };
     WorldSet world_set = {
-        Vector2(5, 5),
+        Vector2Int(5, 5),
         &WorldMap[0][0],
         &WorldSpec[0][0]
     };
@@ -110,17 +110,17 @@ int main() {
 
     //entities
     Entity camera = world.CreateEntity();
-    world.AddComponent(camera , Transform(Vector2(-1, -1)));
+    world.AddComponent(camera , Transform(Vector2Int(-1, -1)));
 
     Entity player = world.CreateEntity();
-    world.AddComponent(player, Transform(Vector2(0, 0), Vector2(4, 4)));
+    world.AddComponent(player, Transform(Vector2Int(0, 0), Vector2Int(4, 4)));
     world.AddComponent(player, Renderable(TILE_ID(1) | TILE_LAYER(2) | TILE_PALETTE(0) | TILE_Y_IVRT));
     world.AddComponent(player, Collider());
     world.AddComponent(player, Physics());
     world.AddComponent(player, PlayerMoveScript(player, world.GetStorage<Transform>(), world.GetStorage<Physics>(), &keys, world_set, tile_set));
 
     Entity z1_test = world.CreateEntity();
-    world.AddComponent(z1_test, Transform(Vector2(5, 5), Vector2(4, 4)));
+    world.AddComponent(z1_test, Transform(Vector2Int(5, 5), Vector2Int(4, 4)));
     world.AddComponent(z1_test, Renderable(TILE_ID(1) | TILE_LAYER(2) | TILE_PALETTE(1)));
     world.AddComponent(z1_test, Zombie());
     world.AddComponent(z1_test, Collider());
@@ -175,10 +175,12 @@ int main() {
         for (IRule *rule: rules)
             rule->Update();
 
+
+        world.FlushDestroyed();
+
         virtual_screen.Clear();
         for (IRender *render: renders)
             render->Render(virtual_screen);
-
 
         wiz.OverwriteBuffer(painter.GetScreen(virtual_screen.GetScreen()));
         SDL_Delay(41); //16ms = 60fps, 41ms = 24fps
