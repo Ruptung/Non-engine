@@ -7,7 +7,7 @@
 class PrintOnCollide : public ICollide {
 public:
     void Collide(Entity other) override {
-        printf("Collide %d\n", other);
+        printf("Collide %d\n", other.id);
     }
 private:
 };

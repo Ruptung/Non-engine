@@ -21,6 +21,7 @@
 #include "Headers/Addons/Tile_Addon/TileMapRenderer.h"
 #include "Implements/PersonalScript/PlayerMoveScript.h"
 #include "Headers/Addons/Tile_Addon/TileObjectRender.h"
+#include "Implements/Rules/CreatureRule.h"
 #include "Implements/PersonalScript/HordeBehavior.h"
 #include "Implements/Rules/ColliderRule.h"
 #include "Implements/Rules/PhysicsRule.h"
@@ -125,6 +126,7 @@ int main() {
     world.AddComponent(z1_test, Zombie());
     world.AddComponent(z1_test, Collider());
     world.AddComponent(z1_test, Physics());
+    world.AddComponent(z1_test, Creature(20, 0));
 
     Entity Manager = world.CreateEntity();
     world.AddComponent(Manager, HordeBehavior(player, world.GetStorage<Transform>(), world.GetStorage<Physics>(), world.GetStorage<Zombie>()));
@@ -138,6 +140,7 @@ int main() {
 
     PhysicsRule physics_rule = PhysicsRule(*world.GetStorage<Physics>(), *world.GetStorage<Transform>(), world_set, tile_set);
     ColliderRule collider_rule = ColliderRule(*world.GetStorage<Collider>(), *world.GetStorage<Transform>(), world);
+    CreatureRule creature_rule = CreatureRule(&world, *world.GetStorage<Creature>());
 
     TileObjectRender object_render = TileObjectRender(tile_painter, *world.GetStorage<Renderable>(), *world.GetStorage<Transform>());
     TileMapRenderer map_renderer = TileMapRenderer(tile_painter, screen_set, tile_set, world_set, *world.GetStorage<Transform>(), camera);
@@ -147,6 +150,7 @@ int main() {
 
     rules.push_back(&physics_rule);
     rules.push_back(&collider_rule);
+    rules.push_back(&creature_rule);
 
     renders.push_back(&object_render);
     renders.push_back(&map_renderer);
@@ -174,7 +178,6 @@ int main() {
 
         for (IRule *rule: rules)
             rule->Update();
-
 
         world.FlushDestroyed();
 

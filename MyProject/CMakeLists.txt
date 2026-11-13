@@ -32,6 +32,7 @@ add_executable(MyProject main.cpp
         Headers/InterfaceView.h
         Implements/PersonalScript/HordeBehavior.h
         Implements/Rules/PhysicsRule.h
+        Implements/Rules/CreatureRule.h
 )
 
 target_include_directories(MyProject PRIVATE

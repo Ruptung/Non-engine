@@ -8,6 +8,10 @@
 #include "Headers/World.h"
 
 class ColliderRule : public IRule {
+private:
+    Storage<Collider> &colliders;
+    Storage<Transform> &transforms;
+    World &world;
 public:
     ColliderRule(Storage<Collider> &colliders, Storage<Transform> &transforms, World &world)
     : colliders(colliders),
@@ -52,8 +56,4 @@ private:
 
         return true;
     }
-
-    Storage<Collider> &colliders;
-    Storage<Transform> &transforms;
-    World &world;
 };

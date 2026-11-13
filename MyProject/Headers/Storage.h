@@ -1,8 +1,8 @@
 #pragma once
 
+#include <assert.h>
 #include <cstdint>
 #include <vector>
-#include <assert.h>
 
 struct Entity {
     uint16_t id;
@@ -11,7 +11,7 @@ struct Entity {
 
 constexpr Entity NO_ENTITY = {UINT16_MAX, 0};   // "엔티티 없음"
 
-constexpr uint32_t NONE = UINT32_MAX;
+constexpr uint16_t NONE = UINT16_MAX;
 
 class IStorage {
 public:
@@ -24,9 +24,13 @@ public:
 
 template <typename T>
 class Storage : public IStorage{
+private:
+    std::vector<uint16_t> sparse;  // 엔티티 ID → dense 위치 (빈칸은 NONE)
+    std::vector<T> dense;          // 실제 데이터, 빈칸 없음
+    std::vector<Entity> owners;    // dense[i]의 주인
 public:
     bool Has(Entity e) const override {
-        return e.id < sparse.size() && sparse[e.id] != NONE;
+        return (e.id < sparse.size()) && (sparse[e.id] != NONE) && (owners[sparse[e.id]].gen == e.gen);
     }
 
     virtual bool Add(Entity e, T value) {
@@ -46,8 +50,12 @@ public:
         return &dense[sparse[e.id]];
     }
 
+    T* TryGet(Entity e) {
+        return Has(e) ? &dense[sparse[e.id]] : nullptr;
+    }
+
     void Remove(Entity e) override {            // swap-remove: 빈칸 없이 O(1)
-        assert(Has(e));
+        if (!Has(e)) return;
 
         uint32_t i = sparse[e.id];
         dense[i] = dense.back();
@@ -61,8 +69,4 @@ public:
     std::vector<T>& All() { return dense; }
 
     const std::vector<Entity>& Owners() const { return owners; }
-private:
-    std::vector<uint32_t> sparse;  // 엔티티 ID → dense 위치 (빈칸은 NONE)
-    std::vector<T> dense;          // 실제 데이터, 빈칸 없음
-    std::vector<Entity> owners;    // dense[i]의 주인
 };

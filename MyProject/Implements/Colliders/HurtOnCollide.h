@@ -1,8 +1,7 @@
 #pragma once
 
-#include <cstdio>
-
 #include "../../Headers/Interfaces/ICollide.h"
+#include <cstdio>
 
 class HurtOnCollide : public ICollide {
 private:
