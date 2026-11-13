@@ -8,14 +8,14 @@ private:
     Storage<Transform> *transforms;
     Storage<Physics> *physics;
     Storage<Zombie> *zombies;
-    int tick;
+    int frame;
 public:
     HordeBehavior(Entity target, Storage<Transform> *transforms, Storage<Physics> *physics, Storage<Zombie> *zombies)
     : target(target),
     transforms(transforms),
     physics(physics),
     zombies(zombies),
-    tick(0)
+    frame(0)
     {
     }
 
@@ -23,14 +23,18 @@ public:
 
     }
     void Update() override {
-        tick++;
-        if ((tick %= 10) != 0) return;
+        frame++;
+        if ((frame %= 10) != 0) return;
 
 
         auto &zombie_dense = zombies->All();
         auto &zombie_owner = zombies->Owners();
 
+        Transform *tf = transforms->TryGet(target);
+        if (!tf) { return; }
+
         Vector2Int p_pos = transforms->Get(target)->position;
+
 
         for (size_t i = 0; i < zombie_dense.size(); i++) {
 
