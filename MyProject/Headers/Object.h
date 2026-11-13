@@ -42,3 +42,14 @@ struct Collider {
 
 struct Zombie {
 };
+
+struct Creature {
+    Creature(float Health, float HealthDelta)
+    : Health(Health),
+    HealthDelta(HealthDelta)
+    {
+    }
+
+    float Health;
+    float HealthDelta;
+};
