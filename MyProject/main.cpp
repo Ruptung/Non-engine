@@ -31,6 +31,15 @@
 #define VIRTUAL_WIDTH 36
 #define VIRTUAL_HEIGHT 36
 
+void Summon(World &world) {
+    Entity z1_test = world.CreateEntity();
+    world.AddComponent(z1_test, Transform(Vector2Int(5, 5), Vector2Int(4, 4)));
+    world.AddComponent(z1_test, Renderable(TILE_ID(1) | TILE_LAYER(2) | TILE_PALETTE(1)));
+    world.AddComponent(z1_test, Zombie());
+    world.AddComponent(z1_test, Collider());
+    world.AddComponent(z1_test, Physics());
+    world.AddComponent(z1_test, Creature(20, 0));
+}
 
 int main() {
     bool running = true;
@@ -120,20 +129,14 @@ int main() {
     world.AddComponent(player, Physics());
     world.AddComponent(player, PlayerMoveScript(player, world.GetStorage<Transform>(), world.GetStorage<Physics>(), &keys, world_set, tile_set));
 
-    Entity z1_test = world.CreateEntity();
-    world.AddComponent(z1_test, Transform(Vector2Int(5, 5), Vector2Int(4, 4)));
-    world.AddComponent(z1_test, Renderable(TILE_ID(1) | TILE_LAYER(2) | TILE_PALETTE(1)));
-    world.AddComponent(z1_test, Zombie());
-    world.AddComponent(z1_test, Collider());
-    world.AddComponent(z1_test, Physics());
-    world.AddComponent(z1_test, Creature(20, 0));
+    Summon(world);
 
     Entity Manager = world.CreateEntity();
     world.AddComponent(Manager, HordeBehavior(player, world.GetStorage<Transform>(), world.GetStorage<Physics>(), world.GetStorage<Zombie>()));
 
     world.AddComponent(player, HurtOnCollide(world.GetStorage<Zombie>()));
 
-    TilePainter tile_painter(tile_set, world.GetComponent<Transform>(camera));
+    TilePainter tile_painter(tile_set, camera, *world.GetStorage<Transform>());
 
     //Interface
     BasicKeyTest basic_key_test = BasicKeyTest(keys);
@@ -167,8 +170,8 @@ int main() {
             for (IEventListener *listener: listeners)
                 listener->OnEvent(event);
 
-            if (event.type == SDL_EVENT_QUIT || keys.exit)
-                running = false;
+            if (event.type == SDL_EVENT_QUIT || keys.exit) { running = false; }
+            if (event.key.key == SDLK_SPACE) { Summon(world); }
         }
 
         for (auto &view : world.Implementers<IScript>())

@@ -33,10 +33,10 @@ public:
                     std::vector<ICollide*> a = world.FindAll<ICollide>(object);
                     std::vector<ICollide*> b = world.FindAll<ICollide>(target);
 
-                    for (ICollide * collide: a) {
+                    for (ICollide *collide: a) {
                         collide->Collide(target);
                     }
-                    for (ICollide * collide: b) {
+                    for (ICollide *collide: b) {
                         collide->Collide(object);
                     }
                 }
@@ -44,7 +44,7 @@ public:
         }
     }
 private:
-    bool CheckBoxCollide(Transform object, Transform target) {
+    bool CheckBoxCollide(const Transform &object, Transform target) {
         Vector2Int object_pos = object.position;
         Vector2Int target_pos = target.position;
 
