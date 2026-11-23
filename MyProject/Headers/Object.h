@@ -1,32 +1,26 @@
 #pragma once
 
-#include <cstdint>
-#include <vector>
-
 #include "BasicStructures.h"
-#include "Storage.h"
 
 struct Transform {
-    Transform(Vector2Int position)
+    Transform(Vector2 position)
     : position(position),
-    scale(Vector2Int::zero()) {
-
+    extend(Vector2::zero()) {
     }
 
-    Transform(Vector2Int position, Vector2Int scale)
+    Transform(Vector2 position, Vector2 extend)
     : position(position),
-    scale(scale){
+    extend(extend) {
     }
 
-    Vector2Int position;
-    Vector2Int scale;
+    Vector2 position;
+    Vector2 extend;
 };
 
 struct Physics {
-    Physics() : Velocity(Vector2Int::zero()), Acceleration(Vector2Int::zero()) {}
+    Physics() : Velocity(Vector2::zero()) {}
 
-    Vector2Int Velocity;
-    Vector2Int Acceleration;
+    Vector2 Velocity;
 };
 
 struct Renderable {
@@ -46,8 +40,7 @@ struct Zombie {
 struct Creature {
     Creature(float Health, float HealthDelta)
     : Health(Health),
-    HealthDelta(HealthDelta)
-    {
+    HealthDelta(HealthDelta) {
     }
 
     float Health;

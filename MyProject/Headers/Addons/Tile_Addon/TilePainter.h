@@ -19,11 +19,11 @@
 
 class TilePainter {
 public:
-    TilePainter(const TileSet &TileSet, Entity target, Storage<Transform> &transforms)
+    TilePainter(const TileSet &TileSet, Storage<Transform> &transforms, Entity target)
     : TileSize(TileSet.TileSize),
     Tiles(TileSet.Tiles),
-    target(target),
-    transforms(transforms)
+    transforms(transforms),
+    target(target)
     {}
 
 

@@ -8,14 +8,12 @@ private:
     Storage<Transform> *transforms;
     Storage<Physics> *physics;
     Storage<Zombie> *zombies;
-    int frame;
 public:
     HordeBehavior(Entity target, Storage<Transform> *transforms, Storage<Physics> *physics, Storage<Zombie> *zombies)
     : target(target),
     transforms(transforms),
     physics(physics),
-    zombies(zombies),
-    frame(0)
+    zombies(zombies)
     {
     }
 
@@ -23,27 +21,21 @@ public:
 
     }
     void Update() override {
-        frame++;
-        if ((frame %= 10) != 0) return;
-
-
         auto &zombie_dense = zombies->All();
         auto &zombie_owner = zombies->Owners();
 
         Transform *tf = transforms->TryGet(target);
         if (!tf) { return; }
 
-        Vector2Int p_pos = transforms->Get(target)->position;
+        Vector2 p_pos = transforms->Get(target)->position;
 
 
         for (size_t i = 0; i < zombie_dense.size(); i++) {
+            const Vector2 *z_pos = &transforms->Get(zombie_owner[i])->position;
 
-            const Vector2Int *z_pos = &transforms->Get(zombie_owner[i])->position;
+            Vector2 lookVec = (p_pos - *z_pos);
 
-            physics->Get(zombie_owner[i])->Velocity = Vector2Int(
-                (p_pos.x < z_pos->x) ? -1 : (p_pos.x > z_pos->x) ? 1 : 0,
-                (p_pos.y < z_pos->y) ? -1 : (p_pos.y > z_pos->y) ? 1 : 0
-                );
+            physics->Get(zombie_owner[i])->Velocity = (lookVec.magnitude() > 0.2f) ? lookVec.normalize() * 0.2f : lookVec;
 
             //printf("%d", zombie);
         }

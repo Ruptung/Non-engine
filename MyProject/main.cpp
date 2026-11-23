@@ -33,7 +33,7 @@
 
 void Summon(World &world) {
     Entity z1_test = world.CreateEntity();
-    world.AddComponent(z1_test, Transform(Vector2Int(5, 5), Vector2Int(4, 4)));
+    world.AddComponent(z1_test, Transform(Vector2(5, 5), Vector2(3, 3)));
     world.AddComponent(z1_test, Renderable(TILE_ID(1) | TILE_LAYER(2) | TILE_PALETTE(1)));
     world.AddComponent(z1_test, Zombie());
     world.AddComponent(z1_test, Collider());
@@ -120,10 +120,10 @@ int main() {
 
     //entities
     Entity camera = world.CreateEntity();
-    world.AddComponent(camera , Transform(Vector2Int(-1, -1)));
+    world.AddComponent(camera , Transform(Vector2(-1, -1)));
 
     Entity player = world.CreateEntity();
-    world.AddComponent(player, Transform(Vector2Int(0, 0), Vector2Int(4, 4)));
+    world.AddComponent(player, Transform(Vector2(0, 0), Vector2(3, 3)));
     world.AddComponent(player, Renderable(TILE_ID(1) | TILE_LAYER(2) | TILE_PALETTE(0) | TILE_Y_IVRT));
     world.AddComponent(player, Collider());
     world.AddComponent(player, Physics());
@@ -136,13 +136,13 @@ int main() {
 
     world.AddComponent(player, HurtOnCollide(world.GetStorage<Zombie>()));
 
-    TilePainter tile_painter(tile_set, camera, *world.GetStorage<Transform>());
+    TilePainter tile_painter(tile_set, *world.GetStorage<Transform>(), camera);
 
     //Interface
     BasicKeyTest basic_key_test = BasicKeyTest(keys);
 
-    PhysicsRule physics_rule = PhysicsRule(*world.GetStorage<Physics>(), *world.GetStorage<Transform>(), world_set, tile_set);
     ColliderRule collider_rule = ColliderRule(*world.GetStorage<Collider>(), *world.GetStorage<Transform>(), world);
+    PhysicsRule physics_rule = PhysicsRule(*world.GetStorage<Physics>(), *world.GetStorage<Transform>(), collider_rule, world_set, tile_set);
     CreatureRule creature_rule = CreatureRule(&world, *world.GetStorage<Creature>());
 
     TileObjectRender object_render = TileObjectRender(tile_painter, *world.GetStorage<Renderable>(), *world.GetStorage<Transform>());
@@ -177,7 +177,6 @@ int main() {
         for (auto &view : world.Implementers<IScript>())
             for (size_t i = 0; i < view->Size(); i++)
                 view->At(i).Update();
-
 
         for (IRule *rule: rules)
             rule->Update();

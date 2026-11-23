@@ -41,7 +41,7 @@ public:
     }
 
     void Update() override {
-        physics->Get(thisEntity)->Velocity = keys->axis;
+        physics->Get(thisEntity)->Velocity = static_cast<Vector2>(keys->axis).normalize() * 0.8f;
     }
 private:
 };
