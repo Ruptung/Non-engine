@@ -98,10 +98,6 @@ int main() {
 
     VirtualScreen virtual_screen(screen_set);
 
-    for (auto &view : current_scene->world.Implementers<IScript>())
-        for (size_t i = 0; i < view->Size(); i++)
-            view->At(i).Start();
-
     // //loop
     while (running) {
         while (SDL_PollEvent(&event)) {
@@ -114,6 +110,7 @@ int main() {
             }
         }
 
+        current_scene->world.FlushStart();
         for (auto &view : current_scene->world.Implementers<IScript>())
             for (size_t i = 0; i < view->Size(); i++)
                 view->At(i).Update();

@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <memory>
 #include <cassert>
+#include <functional>
 #include <type_traits>
 #include <vector>
 
@@ -44,12 +45,23 @@ public:
             ImmDestroyEntity(e);
         }
     }
+    void FlushStart() {
+        for (auto e : script_to_start) e();
+    }
 
     template<typename T>
     void AddComponent(Entity e, T t) {
         if (!checkGeneration(e)) { return; }
 
         assert(CheckDependency<T>(e));
+
+        if constexpr (std::is_base_of_v<IScript, T>) {
+            Storage<T> *s = GetStorage<T>();
+            script_to_start.push_back([e, s] {
+                if (T *c = s->TryGet(e))
+                    c->Start();
+            });
+        }
 
         GetStorage<T>()->Add(e, t);
     }
@@ -154,6 +166,7 @@ private:
         return true;
     }
     std::vector<Entity> entity_to_delete;
+    std::vector<std::function<void()>> script_to_start;
 
     uint16_t entityCounter;
 
