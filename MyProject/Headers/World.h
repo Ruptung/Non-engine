@@ -46,7 +46,10 @@ public:
         }
     }
     void FlushStart() {
-        for (auto e : script_to_start) e();
+        std::vector<std::function<void()>> copied_starts;
+        copied_starts.swap(script_to_start);
+
+        for (auto &start : copied_starts) start();
     }
 
     template<typename T>
